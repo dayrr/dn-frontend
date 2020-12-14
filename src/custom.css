@@ -1,0 +1,55 @@
+.card-header{
+    background-color:#20c997 !important;
+    color:white;
+    font-weight: bold;
+}
+
+.autocomplete-input, .autocomplete-result{
+    background-image: none !important;
+    background-color: white !important;
+}
+
+.cls-list-group{
+    max-height: 300px;
+    margin-bottom: 10px;
+    overflow:scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+hr {
+    border: 2px solid green;
+  }
+
+  h3, h4, h6 {
+    text-align: center;
+  }
+  
+
+  .wrapper{
+    min-height: 200px;   
+    padding: 10px;
+    height: 350px;
+  }
+
+  .flex {
+    display: flex;
+}
+
+.CodeMirror {
+  font-family: Arial, monospace;
+  font-size: 16px;
+  height: 600px !important;
+
+  }
+
+.dropdown-item{
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+.dropdown-content{
+  max-width: 700px !important;
+}

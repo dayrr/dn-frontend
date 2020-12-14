@@ -1,0 +1,76 @@
+{
+  "name": "DataNoos",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "start": "vue-cli-service serve --open"
+  },
+  "dependencies": {
+    "@creative-tim-official/argon-dashboard-free": "^1.2.0",
+    "@trevoreyre/autocomplete-vue": "^2.2.0",
+    "axios": "^0.21.0",
+    "babel-eslint": "^10.1.0",
+    "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.20.1",
+    "core-js": "^3.8.0",
+    "eslint": "^7.14.0",
+    "eslint-plugin-vue": "^7.1.0",
+    "fast-json-patch": "^3.0.0-1",
+    "js-cookie": "^2.2.1",
+    "ol": "^6.4.3",
+    "streamdataio-js-sdk": "^2.0.2",
+    "vis-data": "^7.1.1",
+    "vis-network": "^8.5.4",
+    "vis-util": "^4.3.4",
+    "vue": "^2.6.12",
+    "vue-axios": "^3.2.0",
+    "vue-codemirror": "^4.0.6",
+    "vue-graph": "^0.8.7",
+    "vue-router": "^3.4.9",
+    "vue-search-select": "^2.9.3",
+    "vue-simple-search-dropdown": "^1.0.1",
+    "vue-vis-network": "^1.0.2",
+    "vuewordcloud": "^18.7.12",
+    "vuex": "^3.6.0",
+    "x5-gmaps": "^0.3.30"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.9",
+    "@vue/cli-plugin-eslint": "^4.5.9",
+    "@vue/cli-service": "^4.5.9",
+    "vue-cli-plugin-vue-next": "~0.1.4",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "babel": {
+    "presets": [
+      "@vue/app"
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
