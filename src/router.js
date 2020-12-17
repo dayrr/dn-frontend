@@ -10,6 +10,7 @@ import Workflow from '@/components/Workflow'
 import Service from '@/components/Service'
 import Home from '@/components/Home'
 import UpdateKB from '@/components/UpdateKB'
+import Instance from '@/components/Instance'
 
 Vue.use(Router)
 
@@ -20,6 +21,13 @@ export default new Router({
       name: 'new-dataset',
       component: NewDataset
     },
+
+    {
+      path: '/instance',
+      name: 'instance',
+      component: Instance
+    },
+
 
     {
       path: '/claim',

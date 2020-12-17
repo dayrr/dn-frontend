@@ -11,19 +11,21 @@
     </div>
     <div style="width:600px; margin:auto;">
       <b-input-group>
-    <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-          <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-    </b-input-group>
-  </div>
+        <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
+        <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+      </b-input-group>
+    </div>
 
-    <br/>
+    <br />
     <h4> Recent deposits </h4>
-    <b-table striped sortable hover :items="ds"></b-table>
+    <b-table striped sortable hover :fields="['title', 'description', 'issued', 'subject']" :items="ds" @row-clicked="showDataset"></b-table>
 
-<br/>
+
+
+    <br />
     <b-row>
       <b-col cols="3">
-         <h4> Subjects repartition </h4>
+        <h4> Subjects repartition </h4>
         <graph-pie :width="500" :height="500" :padding-top="75" :padding-right="75" :padding-bottom="75"
           :padding-left="75" :values="values" :names="names" :active-index="[ 0, 2 ]" :active-event="'click'"
           :show-text-type="'outside'" :data-format="dataFormat" :shape="'donut'" :show-total-value="false">
@@ -178,6 +180,11 @@
       search(event) {
         console.log(event.target.outerText);
 
+      },
+      showDataset(record, index) {
+        console.log(index);
+        this.$router.push({ name: 'instance' , params: {uri:record.uri}});
+      
       },
 
       initiateMap() {

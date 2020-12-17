@@ -53,3 +53,7 @@ hr {
 .dropdown-content{
   max-width: 700px !important;
 }
+
+.pointer {
+  cursor: pointer;
+}

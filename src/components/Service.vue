@@ -9,16 +9,18 @@
 
     <b-card header="Service">
       <b-form-group description="Generated automatically" label="URI" label-cols-sm="1" label-cols-lg="1">
-        <input type="text" class="form-control" v-model="uri" name="publication" disabled>
+        <input type="text" class="form-control" v-model="uri" autocomplete="off" name="service" disabled>
       </b-form-group>
 
       <b-form-group label="Name*" label-cols-sm="1" label-cols-lg="1">
-        <input type="text" class="form-control" v-model="identifier" placeholder="Service name" name="name">
+        <input type="text" class="form-control" v-model="name" autocomplete="off" placeholder="Service name"
+          name="name">
       </b-form-group>
 
 
       <b-form-group label="Description*" label-cols-sm="1" label-cols-lg="1">
-        <input type="text" class="form-control" v-model="identifier" placeholder="Service description" name="desc">
+        <input type="text" class="form-control" v-model="desc" autocomplete="off" placeholder="Service description"
+          name="desc">
       </b-form-group>
 
       <b-form-group id="fieldset-10" description="" label="Upload script*" label-cols-sm="1" label-cols-lg="1">
@@ -28,27 +30,27 @@
 
 
       <b-form-group label="Operation*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="operations" option-value="uri" option-text="label" id="operation" :maxItem="10"
+        <Dropdown :options="operations" option-value="uri" option-text="label"  v-on:selected="selectOperation" id="operation" :maxItem="10"
           v-model="operation" placeholder="Enter some characters">
         </Dropdown>
       </b-form-group>
 
 
       <b-form-group label="Input format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label" id="inputFormat" :maxItem="10"
+        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectInputFormat" id="inputFormat" :maxItem="10"
           v-model="inputFormat" placeholder="Enter some characters">
-        </Dropdown> 
+        </Dropdown>
       </b-form-group>
 
 
       <b-form-group label="Output format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label" id="inputFormat" :maxItem="10"
-          v-model="outputFormat" placeholder="Enter some characters"  :title="outputFormat" 
+        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectOutputFormat" id="outputFormat" :maxItem="10"
+          v-model="outputFormat" placeholder="Enter some characters" :title="outputFormat"
           v-b-tooltip.hover="{ variant: 'info' }">
         </Dropdown>
       </b-form-group>
 
-      
+
 
 
 
@@ -72,7 +74,7 @@
 
 <script>
   const axios = require('axios');
-   
+
 
   export default {
     name: 'Reference',
@@ -80,13 +82,15 @@
     data() {
       return {
         uri: "",
+        name: "",
+        desc: "",
         statements: [],
         qualifiers: [],
-        operation: "",
+        operation: {},
         file: [],
         operations: [],
-        inputFormat: "",
-        outputFormat: "",
+        inputFormat: {},
+        outputFormat: {},
         identifier: "",
         subject: "",
         options: [{
@@ -188,15 +192,58 @@
       document.getElementsByName("dropdown")[0].className = "form-control";
       document.getElementsByName("dropdown")[1].className = "form-control";
       document.getElementsByName("dropdown")[2].className = "form-control";
+      document.getElementsByName("dropdown")[2].autocomplete = "off";
+      document.getElementsByName("dropdown")[1].autocomplete = "off";
+      document.getElementsByName("dropdown")[0].autocomplete = "off";
       //this.$refs.inputFormat.classList.toggle('form-control');
 
     },
     methods: {
 
 
+      selectInputFormat(selection) {
+        this.inputFormat = selection;
+
+      },
+      selectOutputFormat(selection) {
+        this.outputFormat = selection;
+     
+      },
+
+      selectOperation(selection) {
+        this.operation = selection;
+  
+      },
 
       submitService: function () {
 
+        const formData = new FormData();
+        formData.append("file_uploaded", this.file);
+        formData.append("name", this.name);
+        formData.append("uri", this.uri);
+        formData.append("desc", this.desc);
+        formData.append("operation", this.operation.id);
+        formData.append("inputFormat", this.inputFormat.id);
+        formData.append("outputFormat", this.outputFormat.id);
+        formData.append("subject", this.subject);
+
+        axios({
+            method: 'post',
+            url: '/api/new_service',
+            headers: {
+              'content-Type': 'multipart/form-data'
+            },
+            data: formData
+          }).then(function (rs) {
+            if (rs.data === "ok")
+              alert("Service created");
+            else
+              alert("Service creation failed");
+          })
+          .catch(function () {
+            alert("Service creation failed. Check your connection.");
+          });
+        this.file = null;
 
       },
 
