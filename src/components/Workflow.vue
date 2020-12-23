@@ -29,8 +29,9 @@
 
     <div ref="network" class="wrapper"> </div>
     <b-alert variant="success" show>{{this.selectedNode.title}}
-      <br/>Status: {{this.selectedNode.status}}
-      <br/>Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.output"> {{this.selectedNode.output}} </a>
+      <br />Status: {{this.selectedNode.status}}
+      <br />Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.output">
+        {{this.selectedNode.output}} </a>
     </b-alert>
 
 
@@ -52,12 +53,13 @@
     props: [],
     data() {
       return {
+        uri: '',
         network: null,
         container: null,
         count: 1,
         data: null,
         selectedOp: {},
-        selectedNode:{},
+        selectedNode: {},
         desc: false,
         Operations: [{
             uri: 'http://melodi.irit.fr/resource/Service/1',
@@ -137,6 +139,12 @@
 
     mounted: function () {
 
+      if (this.$route.params.uri !== undefined)
+        this.uri = this.$route.params.uri;
+      else
+        this.uri = this.$route.query.uri;
+
+
       this.nodes = [{
         id: this.nodes.length,
         label: 'Retrieve_data' + "\n",
@@ -145,7 +153,7 @@
         color: {
           background: "#007bff"
         },
-        title: "Retrieve the file (distribution) from Dataverse"
+        title: "Retrieve the file (distribution) from Dataverse: " + this.uri
       }];
 
 
@@ -155,8 +163,11 @@
       };
 
       this.container = this.$refs.network;
-      
-      this.updateGraph(); 
+
+      this.updateGraph();
+
+
+
 
     },
     methods: {
@@ -192,7 +203,7 @@
         console.log(this.nodes);
         console.log(this.edges);
 
-        this.updateGraph(); 
+        this.updateGraph();
 
 
       },
@@ -203,7 +214,7 @@
         this.network = new Network(this.$refs.network, this.data, this.options);
         let that = this;
         this.network.on("selectNode", function (params) {
-               that.selectedNode =  that.nodes.find(node => node.id === params.nodes[0]);
+          that.selectedNode = that.nodes.find(node => node.id === params.nodes[0]);
         });
       },
 
@@ -211,24 +222,24 @@
       async run() {
         //http://localhost:8000/api/work?uri=http://melodi.irit.fr/resource/Service/0&in=
         let inputFile = "";
-        for(let i=0;i< this.nodes.length+1; i++)
-        {
+        for (let i = 0; i < this.nodes.length + 1; i++) {
           this.nodes[i].color.background = "#28a745";
           this.updateGraph();
           //alert(inputFile);
-          await axios.get('http://localhost:8000/api/work?uri=' + this.nodes[i].uri + "&in="+ inputFile).then((res) => {
-            console.log(res);
-            this.nodes[i].color.background = "#007bff";
-            this.nodes[i].output = res.data.rs.file;
-            inputFile = res.data.rs.file;
-            this.nodes[i].status = res.data.rs.rs;
-            this.updateGraph();
+          await axios.get('http://localhost:8000/api/work?uri=' + this.nodes[i].uri + "&in=" + inputFile).then((
+            res) => {
+              console.log(res);
+              this.nodes[i].color.background = "#007bff";
+              this.nodes[i].output = res.data.rs.file;
+              inputFile = res.data.rs.file;
+              this.nodes[i].status = res.data.rs.rs;
+              this.updateGraph();
 
-          });
+            });
         }
 
-          
-       
+
+
 
 
 

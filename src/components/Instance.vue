@@ -1,13 +1,15 @@
 <template>
   <div>
-    <h4>{{uri}}</h4>
+    <h4>{{uri}} <div v-show="distribution">
+        <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
+          Run workflows</b-button>
+      </div>
+    </h4>
+
+
     <b-row>
       <b-col cols="9">
         <b-table striped sortable hover :items="triples" @row-clicked="show" class="pointer"></b-table>
-
-
-
-
 
         <div v-for="(props, domain) in groups" v-bind:key="props">
           <MetaInput :props="props" :domain="domain">
@@ -99,7 +101,9 @@
         classProps: [],
         metaInputs: [],
         count: 0,
-        groups: null
+        groups: null,
+        distribution: false,
+        download: ''
 
       }
 
@@ -110,11 +114,22 @@
       else
         this.uri = this.$route.query.uri;
 
+
+
       axios({
           method: 'get',
           url: 'http://localhost:8000/api/instance?uri=' + this.uri,
         }).then((res) => {
           this.triples = res.data.rs;
+          if (this.uri.includes("Distribution"))
+            for (let i = 0; i < this.triples.length; i++) {
+              //console.log(this.triples[i]);
+              if (this.triples[i].property.includes("download"))
+              {
+                this.download = this.triples[i].value;
+                this.distribution = true;
+              }
+            }
 
 
         })
@@ -184,6 +199,14 @@
     },
 
     methods: {
+      addWorkflow: function () {
+        this.$router.push({
+          name: 'work',
+          params: {
+            uri: this.download
+          }
+        });
+      },
 
       groupBy: function (array, key) {
         const result = {}
@@ -198,7 +221,7 @@
 
 
       selectOnto: function () {
-        console.log(this.selectedOnto.uri);
+        console.log(this.selectedOnto);
         this.ontoClasses = this.classes.filter(cls => cls.onto === this.selectedOnto);
         this.ontoClasses.sort(function (a, b) {
           return a.title > b.title;
@@ -239,7 +262,8 @@
 
       show(record, index) {
         console.log(index);
-        console.log(record.value);
+        //console.log(record.value);
+
         if (record.value.includes("http")) {
           let routeData = this.$router.resolve({
             name: 'instance',

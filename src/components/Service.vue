@@ -37,15 +37,13 @@
 
 
       <b-form-group label="Input format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectInputFormat" id="inputFormat" :maxItem="10"
-          v-model="inputFormat" placeholder="Enter some characters">
+        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectInputFormat" id="inputFormat" :maxItem="10" placeholder="Enter some characters">
         </Dropdown>
       </b-form-group>
 
 
       <b-form-group label="Output format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectOutputFormat" id="outputFormat" :maxItem="10"
-          v-model="outputFormat" placeholder="Enter some characters" :title="outputFormat"
+        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectOutputFormat" id="outputFormat" :maxItem="10" placeholder="Enter some characters" 
           v-b-tooltip.hover="{ variant: 'info' }">
         </Dropdown>
       </b-form-group>
