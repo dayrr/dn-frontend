@@ -11,6 +11,7 @@ import Service from '@/components/Service'
 import Home from '@/components/Home'
 import UpdateKB from '@/components/UpdateKB'
 import Instance from '@/components/Instance'
+import Datasets from '@/components/Datasets'
 
 Vue.use(Router)
 
@@ -27,6 +28,13 @@ export default new Router({
       name: 'instance',
       component: Instance
     },
+
+    {
+      path: '/datasets',
+      name: 'datasets',
+      component: Datasets
+    },
+
 
 
     {

@@ -11,8 +11,8 @@
     </div>
     <div style="width:600px; margin:auto;">
       <b-input-group>
-        <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-        <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+        <b-form-input size="sm" class="mr-sm-2" v-model="searchText" placeholder="Search"></b-form-input>
+        <b-button size="sm" class="my-2 my-sm-0"  v-on:click="searchTitle" type="button">Search</b-button>
       </b-input-group>
     </div>
 
@@ -91,6 +91,7 @@
         names: [],
         ds: [],
         loc: [],
+        searchText:'',
         map: null,
         vectorLayer: null,
         clusterLayer: null,
@@ -177,8 +178,14 @@
 
       ,
     methods: {
+      searchTitle(){
+         this.$router.push({ name: 'datasets' , params: {search:'title', searchValue:this.searchText}});
+      }
+      ,
+
       search(event) {
         console.log(event.target.outerText);
+        this.$router.push({ name: 'datasets' , params: {search:'keyword', searchValue:event.target.outerText}});
 
       },
       showDataset(record, index) {
