@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import messages from './modules/messages'
-import ontologies from './modules/ontologies'
+
 
 Vue.use(Vuex)
 

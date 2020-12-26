@@ -12,6 +12,7 @@ import Home from '@/components/Home'
 import UpdateKB from '@/components/UpdateKB'
 import Instance from '@/components/Instance'
 import Datasets from '@/components/Datasets'
+import Query from '@/components/Query'
 
 Vue.use(Router)
 
@@ -83,6 +84,11 @@ export default new Router({
       path: '/service',
       name: 'service',
       component: Service
+    },
+    {
+      path: '/query',
+      name: 'query',
+      component: Query
     }
   ]
 })

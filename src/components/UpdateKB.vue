@@ -34,34 +34,11 @@ import 'codemirror/mode/turtle/turtle.js'
 
 
     created: function () {
-      this.statements.push({
-        id: this.statements.length,
-        value: ''
-      });
-
-      this.qualifiers.push({
-        id: this.qualifiers.length,
-        value: ''
-      });
+      
     },
     
     methods: {
-      addStatement: function () {
-        this.statements.push({
-          id: this.statements.length,
-          value: ''
-        });
-      },
-
-      addQualifier: function () {
-        this.qualifiers.push({
-          id: this.qualifiers.length,
-          value: ''
-        });
-      },
-
-      submitClaims: function () {
-      },
+     
     }
   }
 </script>

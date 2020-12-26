@@ -38,7 +38,7 @@ hr {
 .CodeMirror {
   font-family: Arial, monospace;
   font-size: 16px;
-  height: 600px !important;
+  height: 400px !important;
 
   }
 
@@ -57,3 +57,24 @@ hr {
 .pointer {
   cursor: pointer;
 }
+
+.nav-item{
+font-weight: bold;
+}
+
+.nav-item a
+{
+ color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.dropdown-menu
+{
+  background-color: #343a40;
+}
+
+.dropdown-item:hover
+{
+  background-color:gray !important;
+}
+
+

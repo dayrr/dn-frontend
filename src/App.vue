@@ -50,6 +50,11 @@
             <router-link :to="{ name: 'kb' }"> Update KB </router-link>
           </b-nav-item>
 
+               <b-nav-item href="#">
+            <router-link :to="{ name: 'query' }"> Query KB </router-link>
+          </b-nav-item>
+
+
           <b-nav-item href="#">
             <router-link :to="{ name: 'meta' }"> Metadata </router-link>
           </b-nav-item>
@@ -79,12 +84,16 @@
 
 <script>
   export default {
-        methods: {
-          open: function () {
-            window.open("http://localhost:7200/", '_blank');
+    methods: {
+      created() {
+        document.title = "DataNoos";
+      },
 
-          }
-        }
-    
+      open: function () {
+        window.open("http://localhost:7200/", '_blank');
+
+      }
+    }
+
   }
-  </script>
+</script>

@@ -18,7 +18,7 @@
 
     <br />
     <h4> Recent deposits </h4>
-    <b-table striped sortable hover :fields="['title', 'description', 'issued', 'subject']" :items="ds" @row-clicked="showDataset"></b-table>
+    <b-table striped sortable hover :fields="['title', 'description', 'issued', 'subject']" :items="ds" class="pointer" @row-clicked="showDataset"></b-table>
 
 
 
@@ -102,6 +102,7 @@
       }
     },
     async mounted() {
+              document.title = "DataNoos";
         await this.initiateMap();
         axios({
             method: 'get',
