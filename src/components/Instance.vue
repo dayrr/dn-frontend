@@ -103,7 +103,8 @@
         count: 0,
         groups: null,
         distribution: false,
-        download: ''
+        download: '',
+        format:''
 
       }
 
@@ -127,8 +128,15 @@
               if (this.triples[i].property.includes("download"))
               {
                 this.download = this.triples[i].value;
+                this.format = 
                 this.distribution = true;
               }
+               //console.log(this.triples[i]);
+              if (this.triples[i].property.includes("hasFormat"))
+              {
+                this.format = this.triples[i].value;           
+              }
+
             }
 
 
@@ -203,7 +211,9 @@
         this.$router.push({
           name: 'work',
           params: {
-            uri: this.download
+            uri: this.uri,
+            format: this.format,
+            url: this.download
           }
         });
       },

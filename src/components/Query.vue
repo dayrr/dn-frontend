@@ -17,7 +17,7 @@
 </template>
 
 <script>
- const axios = require('axios');
+  const axios = require('axios');
   import 'codemirror/mode/turtle/turtle.js'
   export default {
     name: 'UpdateKB',
@@ -50,9 +50,9 @@
 
     methods: {
       query() {
-        axios({
+       axios({
             method: 'get',
-            url: 'http://localhost:8000/api/query?query='+this.sparql,
+            url: 'http://localhost:8000/api/query?query=' + encodeURIComponent(this.sparql),
           }).then((res) => {
             this.triples = res.data.rs;
 

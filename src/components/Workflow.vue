@@ -1,46 +1,44 @@
 <template>
   <div>
-
     <div class="row">
-
       <h3> New Workflow </h3>
-
+      Distribution {{this.uri}}
     </div>
-
 
     <b-alert variant="success" :show="desc">{{this.selectedOp.desc}}</b-alert>
     <b-form inline>
 
-      Select a function
+      Function
       <b-form-select v-model="selectedOp" class="ml-2 mb-2 mr-sm-2 mb-sm-0" @change="setDesc">
-        <option v-for="(op, idx) in Operations" :key="idx" :value="{uri: op.uri, name:op.name, desc:op.desc}"
+        <option v-for="(op, idx) in services" :key="idx"
+          :value="{index:idx, uri: op.uri, name:op.name, desc:op.desc, input:op.input, operation:op.operation, output:op.output}"
           :title="op.desc" v-b-tooltip.hover="{ variant: 'info' }">
           {{ op.name }}
         </option>
-      </b-form-select>
-
-      <b-button class="text-center mt-4 mb-4 mr-sm-2" type="button" v-on:click="addNode" size="lg" variant="primary">
+      </b-form-select> Parameters:
+      <input type="text" class="form-control" v-model="params" name="parameters">
+      <b-button :disabled="Object.keys(selectedOp).length == 0" class="text-center mt-4 mb-4 ml-2 mr-sm-2" type="button"
+        v-on:click="addNode" size="lg" variant="primary">
         Add to workflow</b-button>
-
-
       <b-button class="text-center mt-4 mb-4" type="button" v-on:click="run" size="lg" variant="danger">
         Run</b-button>
     </b-form>
-
     <div ref="network" class="wrapper"> </div>
-    <b-alert variant="success" show>{{this.selectedNode.title}}
-      <br />Status: {{this.selectedNode.status}}
-      <br />Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.output">
-        {{this.selectedNode.output}} </a>
+    <b-alert variant="success" show>
+      <ul>
+        <li>Service: {{this.selectedNode.title}} </li>
+        <li>Description: {{this.selectedNode.desc}} </li>
+        <li>Input format: {{this.selectedNode.input}} </li>
+        <li>Output format: {{this.selectedNode.output}} </li>
+        <li>Operation: {{this.selectedNode.operation}} </li>
+        <li>Parameters: {{this.selectedNode.params}} </li>
+        <li>Status: {{this.selectedNode.status}}</li>
+        <li>Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.outputdata">
+            {{this.selectedNode.dataoutput}} </a> </li>
+      </ul>
     </b-alert>
-
-
-
-
   </div>
 </template>
-
-
 
 <script>
   const axios = require('axios');
@@ -61,27 +59,11 @@
         selectedOp: {},
         selectedNode: {},
         desc: false,
-        Operations: [{
-            uri: 'http://melodi.irit.fr/resource/Service/1',
-            desc: 'Drop a column of the CSV file based on its index. Input: the CSV file, the column index. Output: CSV file. This function was initially created for MeteoFrance synop data processing but can be used for other scenerios.',
-            name: 'CSV Drop column'
-          },
-          {
-            uri: 'http://melodi.irit.fr/resource/Service/2',
-            desc: 'Caculate average by grouping the first and second columns. Input: the CSV file. Output: CSV file. This function was initially created for MeteoFrance synop data processing.',
-            name: 'CSV Caculate average '
-          },
-          {
-            uri: 'http://melodi.irit.fr/resource/Service/3',
-            desc: 'Plot the 2nd (X axis) and 3rd columns (Y axis). Input: the CSV file. Output: CSV file.',
-            name: 'CSV Plot'
-          },
-          {
-            uri: 'http://melodi.irit.fr/resource/Service/4',
-            desc: 'Filter all rows based on the ID value (First column). Input: the CSV file. Output: CSV file.',
-            name: 'CSV Row filter'
-          }
-        ],
+        services: [],
+        services_origin: [],
+        dist_format: "",
+        dist_url: "",
+        params: "",
         nodes: [
 
         ],
@@ -116,7 +98,7 @@
             hierarchical: {
               direction: "LR",
               sortMethod: "directed",
-              levelSeparation: 300
+              levelSeparation: 400
             }
           },
           interaction: {
@@ -127,13 +109,7 @@
             // enabled: false
           }
         }
-
-
       }
-
-
-
-
     },
 
 
@@ -144,32 +120,76 @@
       else
         this.uri = this.$route.query.uri;
 
+      axios({
+          method: 'get',
+          url: 'http://localhost:8000/api/distribution?uri=' + this.uri
+        }).then((res) => {
+          this.dist_format = res.data.rs[0].format;
+          this.dist_url = res.data.rs[0].download;
 
-      this.nodes = [{
-        id: this.nodes.length,
-        label: 'Retrieve_data' + "\n",
-        shape: 'box',
-        uri: 'http://melodi.irit.fr/resource/Service/0',
-        color: {
-          background: "#007bff"
-        },
-        title: "Retrieve the file (distribution) from Dataverse: " + this.uri
-      }];
+          this.nodes = [{
+            id: this.nodes.length,
+            label: 'Retrieve data' + "\n",
+            title: 'Retrieve data' + "\n",
+            shape: 'box',
+
+            uri: 'http://melodi.irit.fr/resource/Service/1',
+            color: {
+              background: "#007bff"
+            },
+
+            desc: "Retrieve the file (distribution) from Dataverse: ",
+            params: "--url " + this.dist_url,
+            output: this.dist_format,
+            input: "None",
+            operation: "Parsing",
+            status: "Not executed yet"
+          }];
+          this.data = {
+            nodes: this.nodes,
+            edges: this.edges,
+          };
+          this.container = this.$refs.network;
+          this.updateGraph();
 
 
-      this.data = {
-        nodes: this.nodes,
-        edges: this.edges,
-      };
+          axios({
+              method: 'get',
+              url: 'http://localhost:8000/api/service'
+            }).then((res) => {
+              this.services = res.data.rs;
+              this.services_origin = this.services;
+         
 
-      this.container = this.$refs.network;
 
-      this.updateGraph();
+            })
+            .catch((error) => {
+              console.log(error)
+              // error.response.status Check status code
+            }).finally(() => {
+              //Perform action in always
+            });
+
+
+
+
+
+
+        })
+        .catch((error) => {
+          console.log(error)
+          // error.response.status Check status code
+        }).finally(() => {
+          //Perform action in always
+        });
+
+
 
 
 
 
     },
+
     methods: {
 
       setDesc: function () {
@@ -177,17 +197,16 @@
         this.desc = true;
       },
 
+
       addNode: function () {
-
         //let sh = this.Operations.find(op => op.uri === this.selectedOp);
-
-
-
+        this.desc = false;
         this.edges.push({
           from: this.nodes.length - 1,
           to: this.nodes.length,
-          label: "        CSV"
+          label: this.nodes[this.nodes.length - 1].output
         });
+
 
         this.nodes.push({
           id: this.nodes.length,
@@ -197,18 +216,22 @@
           color: {
             background: "#007bff"
           },
-          title: this.selectedOp.desc
+          title: this.selectedOp.name,
+          desc: this.selectedOp.desc,
+          input: this.selectedOp.input,
+          output: this.selectedOp.output,
+          operation: this.selectedOp.operation,
+          status: "Not executed yet",
+          params: this.params
         });
-
-        console.log(this.nodes);
-        console.log(this.edges);
-
+        this.params = "";
         this.updateGraph();
-
-
+        let that = this;
+       
+        this.services = this.services_origin.filter(function (sv) {
+          return sv.input == that.selectedOp.output;
+        });
       },
-
-
 
       updateGraph() {
         this.network = new Network(this.$refs.network, this.data, this.options);
@@ -217,44 +240,27 @@
           that.selectedNode = that.nodes.find(node => node.id === params.nodes[0]);
         });
       },
-
-
       async run() {
+        this.desc = false;
         //http://localhost:8000/api/work?uri=http://melodi.irit.fr/resource/Service/0&in=
         let inputFile = "";
         for (let i = 0; i < this.nodes.length + 1; i++) {
           this.nodes[i].color.background = "#28a745";
           this.updateGraph();
           //alert(inputFile);
-          await axios.get('http://localhost:8000/api/work?uri=' + this.nodes[i].uri + "&in=" + inputFile).then((
+          await axios.get('http://localhost:8000/api/work?uri=' + this.nodes[i].uri + "&in=" + inputFile +
+            "&params=" + this.nodes[i].params).then((
             res) => {
-              console.log(res);
-              this.nodes[i].color.background = "#007bff";
-              this.nodes[i].output = res.data.rs.file;
-              inputFile = res.data.rs.file;
-              this.nodes[i].status = res.data.rs.rs;
-              this.updateGraph();
+            console.log(res);
+            this.nodes[i].color.background = "#007bff";
+            this.nodes[i].outputdata = res.data.rs.file;
+            inputFile = res.data.rs.file;
+            this.nodes[i].status = res.data.rs.rs;
+            this.updateGraph();
 
-            });
+          });
         }
-
-
-
-
-
-
-
-
-
-
-
       }
-
-
-
     }
-
-
-
   }
 </script>

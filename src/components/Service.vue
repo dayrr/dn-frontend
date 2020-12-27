@@ -233,7 +233,7 @@
             },
             data: formData
           }).then(function (rs) {
-            if (rs.data === "ok")
+            if (rs.data.result === "ok")
               alert("Service created");
             else
               alert("Service creation failed");
