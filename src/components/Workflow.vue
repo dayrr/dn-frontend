@@ -34,7 +34,7 @@
         <li>Parameters: {{this.selectedNode.params}} </li>
         <li>Status: {{this.selectedNode.status}}</li>
         <li>Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.outputdata">
-            {{this.selectedNode.dataoutput}} </a> </li>
+            {{this.selectedNode.outputdata}} </a> </li>
       </ul>
     </b-alert>
   </div>
@@ -133,13 +133,13 @@
             title: 'Retrieve data' + "\n",
             shape: 'box',
 
-            uri: 'http://melodi.irit.fr/resource/Service/1',
+            uri: 'http://melodi.irit.fr/resource/Service/dn_1',
             color: {
               background: "#007bff"
             },
 
             desc: "Retrieve the file (distribution) from Dataverse: ",
-            params: "--url " + this.dist_url,
+            params: this.dist_url,
             output: this.dist_format,
             input: "None",
             operation: "Parsing",
@@ -207,6 +207,8 @@
           label: this.nodes[this.nodes.length - 1].output
         });
 
+        if(this.params=="")
+          this.params="None";
 
         this.nodes.push({
           id: this.nodes.length,
