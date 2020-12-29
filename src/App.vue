@@ -8,7 +8,7 @@
             <b-dropdown-item :to="{ name: 'ref' }">
               New Publication
             </b-dropdown-item>
-            <b-dropdown-item href="#">Search</b-dropdown-item>
+            <b-dropdown-item  :to="{ name: 'pubs' }">List</b-dropdown-item>
           </b-nav-item-dropdown>
 
           <!-- Navbar dropdowns -->
@@ -16,29 +16,29 @@
             <b-dropdown-item :to="{ name: 'new-dataset' }">
               New dataset
             </b-dropdown-item>
-            <b-dropdown-item href="#">Search</b-dropdown-item>
-            <b-dropdown-item href="#">Harvest</b-dropdown-item>
+            <b-dropdown-item  :to="{ name: 'all-datasets' }">List</b-dropdown-item>
+         
           </b-nav-item-dropdown>
 
           <b-nav-item-dropdown text="Claim" right>
             <b-dropdown-item :to="{ name: 'claim' }">
               New Claim
             </b-dropdown-item>
-            <b-dropdown-item href="#">Search</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'claims' }">List</b-dropdown-item>
           </b-nav-item-dropdown>
 
           <b-nav-item-dropdown text="Service" right>
             <b-dropdown-item :to="{ name: 'service' }">
               New Service
             </b-dropdown-item>
-            <b-dropdown-item href="#">Search</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'services' }">List</b-dropdown-item>
           </b-nav-item-dropdown>
 
 
 
           <b-nav-item-dropdown text="Workflow" right>
             <b-dropdown-item :to="{ name: 'work' }">New Workflow </b-dropdown-item>
-            <b-dropdown-item href="#">Run</b-dropdown-item>
+            <b-dropdown-item href="#">List</b-dropdown-item>
           </b-nav-item-dropdown>
 
 

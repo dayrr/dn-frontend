@@ -16,27 +16,7 @@ module.exports = {
       '/api*': {
         // Forward frontend dev server request for /api to django dev server
         target: 'http://localhost:8000/',
-      },
-      '/onto*': {
-        // Forward frontend dev server request for /api to django dev server
-        target: 'http://localhost:8000/',
-      },
-      '/dataset*': {
-        // Forward frontend dev server request for /api to django dev server
-        target: 'http://localhost:8000/',
-      },
-
-      '/distribution*': {
-        // Forward frontend dev server request for /api to django dev server
-        target: 'http://localhost:8000/',
-      },
-
-
-      '/test*': {
-        // Forward frontend dev server request for /api to django dev server
-        target: 'http://localhost:8000/',
-      },
-
+      }
     }
   }
 }

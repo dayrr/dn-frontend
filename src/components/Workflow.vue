@@ -120,6 +120,12 @@
       else
         this.uri = this.$route.query.uri;
 
+      if(this.uri ==undefined)
+        {
+          alert("Please search and select a distribution first!");
+          this.$router.push({ name: 'home' });
+        }  
+
       axios({
           method: 'get',
           url: 'http://localhost:8000/api/distribution?uri=' + this.uri

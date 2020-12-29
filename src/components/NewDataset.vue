@@ -279,7 +279,7 @@
             data: {
               uri: this.uri,
               title: this.title,
-              desc: this.desc,
+              description: this.desc,
               keywords: this.keywords,
               note: this.note,
               issuedDate: this.issuedDate,
