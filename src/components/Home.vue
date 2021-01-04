@@ -106,7 +106,7 @@
         await this.initiateMap();
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/stat_subj',
+            url: 'http://melodi.irit.fr/api/stat_subj',
           }).then((res) => {
 
             let that = this;
@@ -133,7 +133,7 @@
 
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/list_recents',
+            url: 'http://melodi.irit.fr/api/list_recents',
           }).then((res) => {
             this.ds = res.data.rs;
 
@@ -152,7 +152,7 @@
 
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/stat_key',
+            url: 'http://melodi.irit.fr/api/stat_key',
           }).then((res) => {
 
 
@@ -185,20 +185,21 @@
       ,
 
       search(event) {
-        console.log(event.target.outerText);
+
         this.$router.push({ name: 'datasets' , params: {search:'keyword', searchValue:event.target.outerText}});
 
       },
       showDataset(record, index) {
-        console.log(index);
+
         this.$router.push({ name: 'instance' , params: {uri:record.uri}});
+        console.log(index);
       
       },
 
       initiateMap() {
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/loc',
+            url: 'http://melodi.irit.fr/api/loc',
           }).then((res) => {
             this.loc = res.data.rs;
             // create vector layer
@@ -239,9 +240,12 @@
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:31982',
               });
-              feature.setStyle(iconStyle);
-              features.push(feature);
+              
+              feature.setStyle(iconStyle); 
               feature.set("title", this.loc[i].title);
+              feature.set("uri", this.loc[i].uri);             
+              features.push(feature);
+             
 
             }
 
@@ -254,7 +258,7 @@
             var source = new VectorSource({
               features: features
             });
-            console.log(source.getFeatures().length);
+            
 
             this.vectorLayer = new VectorLayer({
               source: source
@@ -330,7 +334,7 @@
               });
               if (feat) {
                 var coordinates = feat.getGeometry().getCoordinates();
-                content.innerHTML = feat.get("title");
+                content.innerHTML = "<a href='#/instance?uri="+ feat.get("uri")+"'>" + feat.get("title") + "</a>";
                 overlay.setPosition(coordinates);
               }
             });

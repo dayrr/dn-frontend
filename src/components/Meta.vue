@@ -169,7 +169,7 @@
   created() {
     axios({
         method: 'get',
-        url: '/api/onto',
+        url: 'http://melodi.irit.fr/api/onto',
       }).then((res) => {
 
         this.ontologies = res.data.rs;
@@ -187,7 +187,7 @@
       });
     axios({
         method: 'get',
-        url: '/api/classes',
+        url: 'http://melodi.irit.fr/api/classes',
       }).then((res) => {
 
         this.classes = res.data.rs;
@@ -203,7 +203,7 @@
 
     axios({
         method: 'get',
-        url: '/api/props',
+        url: 'http://melodi.irit.fr/api/props',
       }).then((res) => {
 
         this.props = res.data.rs;

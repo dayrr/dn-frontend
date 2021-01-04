@@ -275,7 +275,7 @@
 
         axios({
             method: 'post',
-            url: '/dataset',
+            url: 'http://melodi.irit.fr/api/new_dataset',
             data: {
               uri: this.uri,
               title: this.title,
@@ -291,7 +291,7 @@
             }
           }).then((res) => {
            // alert(JSON.stringify(res.data));
-          window.open("http://localhost:8085/dataset.xhtml?persistentId="+res.data.result, '_blank');  
+          window.open("http://localhost:8080/dataset.xhtml?persistentId="+res.data.result, '_blank');  
           this.$router.push({ name: 'upload-files' , params: { doi: res.data.result, uri:this.uri, id:this.id}});
             
           })

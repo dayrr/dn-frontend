@@ -55,15 +55,18 @@
           </b-nav-item>
 
 
-          <b-nav-item href="#">
-            <router-link :to="{ name: 'meta' }"> Metadata </router-link>
-          </b-nav-item>
+        
           <b-nav-item href="#">
             <router-link :to="{ name: 'ontologies' }"> Ontologies </router-link>
           </b-nav-item>
           <b-nav-item v-on:click="open" href="#">
             Triplestore
           </b-nav-item>
+
+          <b-nav-item v-on:click="opendv" href="#">
+            Dataverse
+          </b-nav-item>
+
 
         </b-navbar-nav>
 
@@ -86,11 +89,15 @@
   export default {
     methods: {
       created() {
-        document.title = "DataNoos";
+        document.title = "DataNoos";        
       },
 
       open: function () {
-        window.open("http://localhost:7200/", '_blank');
+        window.open("http://melodi.irit.fr/graphdb/", '_blank');
+      },
+
+      opendv: function () {
+        window.open("http://melodi.irit.fr:8080", '_blank');
 
       }
     }

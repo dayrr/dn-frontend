@@ -4,7 +4,7 @@
     <b-card header="Dataset" variant="dark">
       <b-card-text>
         <p> URI: {{uri}}</p>
-        <p> Landding page: <a v-bind:href="'http://localhost:8085/dataset.xhtml?persistentId='+doi"> {{doi}} </a> </p>
+        <p> Landding page: <a v-bind:href="'http://localhost:8080/dataset.xhtml?persistentId='+doi"> {{doi}} </a> </p>
         <p> DOI: {{doi}}</p>
       </b-card-text>
     </b-card>

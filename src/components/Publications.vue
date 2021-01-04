@@ -22,7 +22,7 @@ export default {
   created() {
     axios({
             method: 'get',
-            url: '/api/pubs',            
+            url: 'http://melodi.irit.fr/api/pubs',            
           }).then((res) => {
             
             this.pubs = res.data.rs; 

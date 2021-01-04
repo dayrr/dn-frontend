@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint",
     "start": "vue-cli-service serve --open"
   },
+  
   "dependencies": {
     "@creative-tim-official/argon-dashboard-free": "^1.2.0",
     "@trevoreyre/autocomplete-vue": "^2.2.0",
@@ -58,7 +59,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "no-unused-vars": "off" 
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

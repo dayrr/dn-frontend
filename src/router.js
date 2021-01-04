@@ -74,7 +74,7 @@ export default new Router({
       component: Claim
     },  
     {
-      path: '/home',
+      path: '/',
       name: 'home',
       component: Home
     }, 

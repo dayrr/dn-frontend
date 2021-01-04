@@ -1,32 +1,44 @@
 <template>
   <div>
-    <h4>{{uri}} <div v-show="distribution">
-        <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
-          Run workflows</b-button>
-      </div>
-    </h4>
+
 
 
     <b-row>
       <b-col cols="9">
-        <b-table striped sortable hover :items="triples" @row-clicked="show" class="pointer"></b-table>
+        <h4>{{uri}} <div v-show="distribution">
+            <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
+              Run workflows</b-button>
+          </div>
+        </h4>
+        <div class="accordion" role="tablist">
 
-        <div v-for="(props, domain) in groups" v-bind:key="props">
-          <MetaInput :props="props" :domain="domain">
-          </MetaInput>
-          <hr>
+          <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+
+            <b-table striped sortable hover :items="triples" @row-clicked="show" class="pointer"></b-table>
+          </b-collapse>
+          <b-button block v-b-toggle.accordion-1 variant="info">Show/Hide triples</b-button>
         </div>
 
 
 
+
         <div v-show="metaInputs.length != 0">
+          <h4> New metadata </h4>
+
+          <div v-for="(props, domain) in groups" v-bind:key="props">
+            <MetaInput :props="props" :domain="domain">
+            </MetaInput>
+            <hr>
+          </div>
+
           <b-button block class="text-center mt-4 mb-4" type="button" size="lg" variant="primary">
             Submit</b-button>
         </div>
 
       </b-col>
       <b-col>
-        Select an ontology:
+        <h4> Add metadata </h4>
+        Ontology:
 
         <b-form-select v-model="selectedOnto" v-on:change="selectOnto">
           <option v-for="(onto, idx) in ontologies" :key="idx" :value="onto.uri" :title="onto.description"
@@ -104,7 +116,7 @@
         groups: null,
         distribution: false,
         download: '',
-        format:''
+        format: ''
 
       }
 
@@ -119,22 +131,20 @@
 
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/instance?uri=' + this.uri,
+          url: 'http://melodi.irit.fr/api/instance?uri=' + this.uri,
         }).then((res) => {
           this.triples = res.data.rs;
           if (this.uri.includes("Distribution"))
             for (let i = 0; i < this.triples.length; i++) {
               //console.log(this.triples[i]);
-              if (this.triples[i].property.includes("download"))
-              {
+              if (this.triples[i].property.includes("download")) {
                 this.download = this.triples[i].value;
-                this.format = 
-                this.distribution = true;
+                this.format =
+                  this.distribution = true;
               }
-               //console.log(this.triples[i]);
-              if (this.triples[i].property.includes("hasFormat"))
-              {
-                this.format = this.triples[i].value;           
+              //console.log(this.triples[i]);
+              if (this.triples[i].property.includes("hasFormat")) {
+                this.format = this.triples[i].value;
               }
 
             }
@@ -150,11 +160,11 @@
 
       axios({
           method: 'get',
-          url: '/api/onto',
+          url: 'http://melodi.irit.fr/api/onto',
         }).then((res) => {
 
           this.ontologies = res.data.rs;
-          console.log(res.data.rs);
+
           this.ontologies.sort(function (a, b) {
             return a.title > b.title;
           });
@@ -168,11 +178,11 @@
         });
       axios({
           method: 'get',
-          url: '/api/classes',
+          url: 'http://melodi.irit.fr/api/classes',
         }).then((res) => {
 
           this.classes = res.data.rs;
-          console.log(res.data.rs);
+
 
         })
         .catch((error) => {
@@ -184,7 +194,7 @@
 
       axios({
           method: 'get',
-          url: '/api/props',
+          url: 'http://melodi.irit.fr/api/props',
         }).then((res) => {
 
           this.props = res.data.rs;
@@ -236,7 +246,7 @@
         this.ontoClasses.sort(function (a, b) {
           return a.title > b.title;
         });
-        console.log(this.ontoClasses);
+
         this.classProps = [];
         this.selectedClass = null;
       },
@@ -263,8 +273,7 @@
         this.count++;
 
         this.groups = this.groupBy(this.metaInputs, 'domain');
-        console.log(this.groups);
-        console.log(event.target);
+
         //event.target.disabled = true;
         prop.disabled = true;
 
@@ -296,7 +305,7 @@
       },
 
       search(input) {
-        const url = `/api/agent?name=${encodeURI(input)}`
+        const url = `http://melodi.irit.fr/api/agent?name=${encodeURI(input)}`
 
         return new Promise(resolve => {
           if (input.length < 4) {
