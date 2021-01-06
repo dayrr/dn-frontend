@@ -22,7 +22,7 @@ export default {
   created() {
     axios({
             method: 'get',
-            url: 'http://melodi.irit.fr/api/onto',            
+            url: 'http://localhost:8000/api/onto',            
           }).then((res) => {
             
             this.ontologies = res.data.rs; 

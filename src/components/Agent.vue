@@ -75,7 +75,7 @@
       },
 
       search(input) {
-        const url = `http://melodi.irit.fr/api/agent?name=${encodeURI(input)}`
+        const url = `http://localhost:8000/api/agent?name=${encodeURI(input)}`
 
         return new Promise(resolve => {
           if (input.length < 4) {

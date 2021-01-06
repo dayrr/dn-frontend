@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div class="row">
+    <div>
       <h3> New Workflow </h3>
-      Distribution {{this.uri}}
+      <div>
+
+      </div>
+      For the distribution <b>{{this.uri.substring(this.uri.lastIndexOf("/")+1)}} </b> of the dataset <b>"{{this.title}}"</b>, format: <b>{{this.dist_format}}</b>, size: <b>{{this.dist_size}} bytes</b>
     </div>
 
     <b-alert variant="success" :show="desc">{{this.selectedOp.desc}}</b-alert>
@@ -33,7 +36,7 @@
         <li>Operation: {{this.selectedNode.operation}} </li>
         <li>Parameters: {{this.selectedNode.params}} </li>
         <li>Status: {{this.selectedNode.status}}</li>
-        <li>Output data: <a v-bind:href="'http://localhost:8000http://melodi.irit.fr/api/download?fn='+ this.selectedNode.outputdata">
+        <li>Output data: <a v-bind:href="'http://localhost:8000/api/download?fn='+ this.selectedNode.outputdata">
             {{this.selectedNode.outputdata}} </a> </li>
       </ul>
     </b-alert>
@@ -52,6 +55,7 @@
     data() {
       return {
         uri: '',
+        title:'',
         network: null,
         container: null,
         count: 1,
@@ -128,10 +132,12 @@
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/distribution?uri=' + this.uri
+          url: 'http://localhost:8000/api/distribution?uri=' + this.uri
         }).then((res) => {
           this.dist_format = res.data.rs[0].format;
           this.dist_url = res.data.rs[0].download;
+          this.title = res.data.rs[0].title;
+          this.dist_size = res.data.rs[0].size;
 
           this.nodes = [{
             id: this.nodes.length,
@@ -161,7 +167,7 @@
 
           axios({
               method: 'get',
-              url: 'http://melodi.irit.fr/api/service'
+              url: 'http://localhost:8000/api/service'
             }).then((res) => {
               this.services = res.data.rs;
               this.services_origin = this.services;
@@ -250,13 +256,13 @@
       },
       async run() {
         this.desc = false;
-        //http://localhost:8000http://melodi.irit.fr/api/work?uri=http://melodi.irit.fr/resource/Service/0&in=
+        //http://localhost:8000/http://localhost:8000/api/work?uri=http://melodi.irit.fr/resource/Service/0&in=
         let inputFile = "";
         for (let i = 0; i < this.nodes.length + 1; i++) {
           this.nodes[i].color.background = "#28a745";
           this.updateGraph();
           //alert(inputFile);
-          await axios.get('http://melodi.irit.fr/api/work?uri=' + this.nodes[i].uri + "&in=" + inputFile +
+          await axios.get('http://localhost:8000/api/work?uri=' + this.nodes[i].uri + "&in=" + inputFile +
             "&params=" + this.nodes[i].params).then((
             res) => {
             console.log(res);

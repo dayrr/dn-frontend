@@ -275,7 +275,7 @@
 
         axios({
             method: 'post',
-            url: 'http://melodi.irit.fr/api/new_dataset',
+            url: 'http://localhost:8000/api/new_dataset',
             data: {
               uri: this.uri,
               title: this.title,

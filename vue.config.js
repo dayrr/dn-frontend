@@ -5,7 +5,7 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'static',
   publicPath: process.env.NODE_ENV === 'production'
-  ? 'http://melodi.irit.fr/datanoos/'
+  ? 'http://localhost:8000/datanoos/'
   : '/',
 
   // baseUrl: IS_PRODUCTION
@@ -17,8 +17,8 @@ module.exports = {
   // and distribute
   devServer: {
     proxy: {
-      'http://melodi.irit.fr/api/*': {
-        // Forward frontend dev server request for http://melodi.irit.fr/api/ to django dev server
+      'http://localhost:8000/api/*': {
+        // Forward frontend dev server request for http://localhost:8000/api/ to django dev server
         target: 'http://localhost:8001/',
       }
     }

@@ -7,7 +7,7 @@
       <b-col cols="9">
         <h4>{{uri}} <div v-show="distribution">
             <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
-              Run workflows</b-button>
+              Create a workflow</b-button>
           </div>
         </h4>
         <div class="accordion" role="tablist">
@@ -38,23 +38,12 @@
       </b-col>
       <b-col>
         <h4> Add metadata </h4>
-        Ontology:
-
-        <b-form-select v-model="selectedOnto" v-on:change="selectOnto">
-          <option v-for="(onto, idx) in ontologies" :key="idx" :value="onto.uri" :title="onto.description"
-            v-b-tooltip.hover="{ variant: 'info' }">
-            {{ onto.title }}
-          </option>
-        </b-form-select>
-
-
-        <div v-show="selectedOnto !== null">
+        
           Select a class:
-
           <b-form-select v-model="selectedClass" v-on:change="selectClass">
-            <option v-for="(cls, idx) in ontoClasses" :key="idx" :value="cls.uri" :title="cls.comment"
+            <option v-for="(cls, idx) in classes" :key="idx" :value="cls.uri" :title="cls.comment"
               v-b-tooltip.hover="{ variant: 'info' }">
-              {{ cls.label }}
+              {{ cls.label}} ({{cls.onto}})
             </option>
           </b-form-select>
 
@@ -71,15 +60,15 @@
             </b-list-group-item>
           </b-list-group>
           -->
-        </div>
+     
 
         <div v-show="selectedClass !== null">
           Select a property
           <b-list-group>
             <b-list-group-item v-bind:disabled="prop.disabled" href="#" @click="selectProp(prop, $event)"
-              class="flex-column align-items-start" v-for="prop in classProps" v-bind:key="prop.uri">
+              class="flex-column align-items-start" v-for="prop in props" v-bind:key="prop.uri">
               <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1" v-b-tooltip.hover="{ variant: 'info' }" v-bind:title="prop.comment">{{ prop.label }}
+                <h6 class="mb-1" v-b-tooltip.hover="{ variant: 'info' }" v-bind:title="prop.comment + ' '+ prop.uri">{{ prop.label }}
                 </h6>
 
               </div>
@@ -99,18 +88,14 @@
   const axios = require('axios');
   export default {
     name: 'Instance',
-    props: ['agent'],
     data() {
       return {
         uri: '',
-        triples: [],
-        ontologies: [],
+        triples: [],       
         classes: [],
         props: [],
         selectedOnto: null,
-        selectedClass: null,
-        ontoClasses: [],
-        classProps: [],
+        selectedClass: null,       
         metaInputs: [],
         count: 0,
         groups: null,
@@ -131,7 +116,7 @@
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/instance?uri=' + this.uri,
+          url: 'http://localhost:8000/api/instance?uri=' + this.uri,
         }).then((res) => {
           this.triples = res.data.rs;
           if (this.uri.includes("Distribution"))
@@ -158,46 +143,14 @@
           //Perform action in always
         });
 
-      axios({
-          method: 'get',
-          url: 'http://melodi.irit.fr/api/onto',
-        }).then((res) => {
-
-          this.ontologies = res.data.rs;
-
-          this.ontologies.sort(function (a, b) {
-            return a.title > b.title;
-          });
-          //this.selectedOnto = this.ontologies[0].uri;
-        })
-        .catch((error) => {
-          console.log(error)
-          // error.response.status Check status code
-        }).finally(() => {
-          //Perform action in always
-        });
-      axios({
-          method: 'get',
-          url: 'http://melodi.irit.fr/api/classes',
-        }).then((res) => {
-
-          this.classes = res.data.rs;
-
-
-        })
-        .catch((error) => {
-          console.log(error)
-          // error.response.status Check status code
-        }).finally(() => {
-          //Perform action in always
-        });
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/props',
+          url: 'http://localhost:8000/api/props?uri='+this.uri,
         }).then((res) => {
 
           this.props = res.data.rs;
+          this.classes = res.data.rs;
           this.props.forEach(function (prop) {
             prop.disabled = false;
           });
@@ -240,22 +193,12 @@
       },
 
 
-      selectOnto: function () {
-        console.log(this.selectedOnto);
-        this.ontoClasses = this.classes.filter(cls => cls.onto === this.selectedOnto);
-        this.ontoClasses.sort(function (a, b) {
-          return a.title > b.title;
-        });
-
-        this.classProps = [];
-        this.selectedClass = null;
-      },
-
+      
       selectClass: function () {
 
-        this.classProps = this.props.filter(prop => prop.domain === this.selectedClass);
+        this.props = this.classes.filter(cls => cls.uri === this.selectedClass)[0].props;
 
-        this.classProps.sort(function (a, b) {
+        this.props.sort(function (a, b) {
           return a.label > b.label;
         });
       },
@@ -305,7 +248,7 @@
       },
 
       search(input) {
-        const url = `http://melodi.irit.fr/api/agent?name=${encodeURI(input)}`
+        const url = `http://localhost:8000/api/agent?name=${encodeURI(input)}`
 
         return new Promise(resolve => {
           if (input.length < 4) {

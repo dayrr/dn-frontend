@@ -58,7 +58,7 @@
 
         axios({
             method: 'post',
-            url: '/distribution',
+            url: 'http://localhost:8000/api/new_distribution',
             headers: {
               'content-Type': 'multipart/form-data'
             },

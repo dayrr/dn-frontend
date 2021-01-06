@@ -93,7 +93,7 @@
     methods: {
 
       search(input) {
-        const url = `http://melodi.irit.fr/api/pub?title=${encodeURI(input)}`
+        const url = `http://localhost:8000/api/pub?title=${encodeURI(input)}`
 
         return new Promise(resolve => {
           if (input.length < 4) {

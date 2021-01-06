@@ -35,7 +35,7 @@
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/datasets?value=' + this.searchValue + "&search=" + this.search,
+          url: 'http://localhost:8000/api/datasets?value=' + this.searchValue + "&search=" + this.search,
         }).then((res) => {
           this.triples = res.data.rs;
         })

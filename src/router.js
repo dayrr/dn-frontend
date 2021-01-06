@@ -5,22 +5,20 @@ import Ontologies from '@/components/Ontologies'
 import Reference from '@/components/Reference'
 import Claim from '@/components/Claim'
 import UploadFiles from '@/components/UploadFiles'
-import Meta from '@/components/Meta'
+
 import Workflow from '@/components/Workflow'
 import Service from '@/components/Service'
-import Services from '@/components/Services'
 import Home from '@/components/Home'
-import Pubs from '@/components/Publications'
 import UpdateKB from '@/components/UpdateKB'
 import Instance from '@/components/Instance'
 import Datasets from '@/components/Datasets'
-import Claims from '@/components/Claims'
-import All_Datasets from '@/components/All_Datasets'
 import Query from '@/components/Query'
+import View from '@/components/View'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [   
     {
       path: '/new-dataset',
@@ -28,28 +26,9 @@ export default new Router({
       component: NewDataset
     },
     {
-      path: '/claims',
-      name: 'claims',
-      component: Claims
-    },
-
-    {
-      path: '/all-datasets',
-      name: 'all-datasets',
-      component: All_Datasets
-    },
-
-
-    {
-      path: '/pubs',
-      name: 'pubs',
-      component: Pubs
-    },
-
-    {
-      path: '/services',
-      name: 'services',
-      component: Services
+      path: '/view',
+      name: 'view',
+      component: View
     },
 
 
@@ -90,11 +69,6 @@ export default new Router({
       component: Workflow
     }, 
 
-    {
-      path: '/meta',
-      name: 'meta',
-      component: Meta
-    },
     {
       path: '/ref',
       name: 'ref',

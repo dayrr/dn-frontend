@@ -52,7 +52,7 @@
       query() {
        axios({
             method: 'get',
-            url: 'http://melodi.irit.fr/api/query?query=' + encodeURIComponent(this.sparql),
+            url: 'http://localhost:8000/api/query?query=' + encodeURIComponent(this.sparql),
           }).then((res) => {
             this.triples = res.data.rs;
 

@@ -158,7 +158,7 @@
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/format',
+          url: 'http://localhost:8000/api/format',
         }).then((res) => {
           this.formats = res.data.rs;
 
@@ -173,7 +173,7 @@
 
       axios({
           method: 'get',
-          url: 'http://melodi.irit.fr/api/operation',
+          url: 'http://localhost:8000/api/operation',
         }).then((res) => {
           this.operations = res.data.rs;
 
@@ -227,7 +227,7 @@
 
         axios({
             method: 'post',
-            url: 'http://melodi.irit.fr/api/new_service',
+            url: 'http://localhost:8000/api/new_service',
             headers: {
               'content-Type': 'multipart/form-data'
             },
