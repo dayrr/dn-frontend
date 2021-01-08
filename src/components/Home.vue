@@ -12,13 +12,14 @@
     <div style="width:600px; margin:auto;">
       <b-input-group>
         <b-form-input size="sm" class="mr-sm-2" v-model="searchText" placeholder="Search"></b-form-input>
-        <b-button size="sm" class="my-2 my-sm-0"  v-on:click="searchTitle" type="button">Search</b-button>
+        <b-button size="sm" class="my-2 my-sm-0" v-on:click="searchTitle" type="button">Search</b-button>
       </b-input-group>
     </div>
 
     <br />
     <h4> Recent deposits </h4>
-    <b-table striped sortable hover :fields="['title', 'description', 'issued', 'subject']" :items="ds" class="pointer" @row-clicked="showDataset"></b-table>
+    <b-table striped sortable hover :fields="['title', 'description', 'issued', 'subject']" :items="ds" class="pointer"
+      @row-clicked="showDataset"></b-table>
     <br />
     <b-row>
       <b-col cols="3">
@@ -86,21 +87,21 @@
         names: [],
         ds: [],
         loc: [],
-        searchText:'',
+        searchText: '',
         map: null,
         vectorLayer: null,
         clusterLayer: null,
-        words: [
-        ]
+        words: []
 
       }
     },
     async mounted() {
-              document.title = "DataNoos";
+        document.title = "DataNoos";
         await this.initiateMap();
+        let url = this.host + 'api/stat-subj';
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/stat_subj',
+            url: url,
           }).then((res) => {
 
             let that = this;
@@ -121,10 +122,10 @@
             //Perform action in always
           });
 
-
+        url = this.host + 'api/list-recents';
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/list_recents',
+            url: url,
           }).then((res) => {
             this.ds = res.data.rs;
           })
@@ -135,10 +136,10 @@
           }).finally(() => {
             //Perform action in always
           });
-
+        url = this.host + 'api/stat-key';
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/stat_key',
+            url: url,
           }).then((res) => {
 
 
@@ -156,28 +157,45 @@
 
       ,
     methods: {
-      searchTitle(){
-         this.$router.push({ name: 'datasets' , params: {search:'title', searchValue:this.searchText}});
-      }
-      ,
+      searchTitle() {
+        this.$router.push({
+          name: 'datasets',
+          params: {
+            search: 'title',
+            searchValue: this.searchText
+          }
+        });
+      },
 
       search(event) {
 
-        this.$router.push({ name: 'datasets' , params: {search:'keyword', searchValue:event.target.outerText}});
+        this.$router.push({
+          name: 'datasets',
+          params: {
+            search: 'keyword',
+            searchValue: event.target.outerText
+          }
+        });
 
       },
-      
+
       showDataset(record, index) {
 
-        this.$router.push({ name: 'instance' , params: {uri:record.uri}});
+        this.$router.push({
+          name: 'instance',
+          params: {
+            uri: record.uri
+          }
+        });
         console.log(index);
-      
+
       },
 
       initiateMap() {
+        let url = this.host + 'api/loc';
         axios({
             method: 'get',
-            url: 'http://localhost:8000/api/loc',
+            url: url,
           }).then((res) => {
             this.loc = res.data.rs;
             // create vector layer
@@ -209,23 +227,22 @@
               }),
             });
 
-            for (let i = 0; i < this.loc.length; i++)
-            {
+            for (let i = 0; i < this.loc.length; i++) {
               let feature = format.readFeature(this.loc[i].geom, {
                 dataProjection: 'EPSG:4326',
                 featureProjection: 'EPSG:31982',
               });
-              
-              feature.setStyle(iconStyle); 
+
+              feature.setStyle(iconStyle);
               feature.set("title", this.loc[i].title);
-              feature.set("uri", this.loc[i].uri);             
-              features.push(feature);             
+              feature.set("uri", this.loc[i].uri);
+              features.push(feature);
             }
 
             var source = new VectorSource({
               features: features
             });
-            
+
             this.vectorLayer = new VectorLayer({
               source: source
             });
@@ -299,7 +316,8 @@
               });
               if (feat) {
                 var coordinates = feat.getGeometry().getCoordinates();
-                content.innerHTML = "<a href='#/instance?uri="+ feat.get("uri")+"'>" + feat.get("title") + "</a>";
+                content.innerHTML = "<a href='#/instance?uri=" + feat.get("uri") + "'>" + feat.get("title") +
+                  "</a>";
                 overlay.setPosition(coordinates);
               }
             });

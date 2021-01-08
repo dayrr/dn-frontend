@@ -31,11 +31,11 @@
         this.searchValue = this.$route.params.searchValue;
       else
         this.searchValue = this.$route.query.searchValue;
+      let url = this.host + 'api/dataset?value=' + this.searchValue + "&search=" + this.search;
 
-
-      axios({
+        axios({
           method: 'get',
-          url: 'http://localhost:8000/api/datasets?value=' + this.searchValue + "&search=" + this.search,
+          url: url
         }).then((res) => {
           this.triples = res.data.rs;
         })
@@ -66,8 +66,8 @@
         window.open(routeData.href, '_blank');
       }
 
-   
-  }
+
+    }
 
 
 

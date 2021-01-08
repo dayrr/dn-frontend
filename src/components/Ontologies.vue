@@ -20,9 +20,10 @@ export default {
   },
 
   created() {
+    let url = this.host + 'api/onto';
     axios({
             method: 'get',
-            url: 'http://localhost:8000/api/onto',            
+            url: url,            
           }).then((res) => {
             
             this.ontologies = res.data.rs; 

@@ -38,11 +38,12 @@
 
     watch: {
       $route(to, from) {
+
         if (to !== from) {
           this.cls = this.$route.query.cls;
           axios({
               method: 'get',
-              url: 'http://localhost:8000/api/' + this.cls,
+              url: this.host + 'api/' + this.cls,
             }).then((res) => {
 
               this.tbl = res.data.rs;
@@ -57,11 +58,12 @@
         }
       }
     },
+
     mounted() {
       this.cls = this.$route.query.cls;
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/' + this.cls,
+          url: this.host + 'api/' + this.cls,
         }).then((res) => {
 
           this.tbl = res.data.rs;

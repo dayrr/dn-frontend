@@ -30,21 +30,22 @@
 
 
       <b-form-group label="Operation*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="operations" option-value="uri" option-text="label"  v-on:selected="selectOperation" id="operation" :maxItem="10"
-          v-model="operation" placeholder="Enter some characters">
+        <Dropdown :options="operations" option-value="uri" option-text="label" v-on:selected="selectOperation"
+          id="operation" :maxItem="10" v-model="operation" placeholder="Enter some characters">
         </Dropdown>
       </b-form-group>
 
 
       <b-form-group label="Input format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectInputFormat" id="inputFormat" :maxItem="10" placeholder="Enter some characters">
+        <Dropdown :options="formats" option-value="uri" option-text="label" v-on:selected="selectInputFormat"
+          id="inputFormat" :maxItem="10" placeholder="Enter some characters">
         </Dropdown>
       </b-form-group>
 
 
       <b-form-group label="Output format*" label-cols-sm="1" label-cols-lg="1">
-        <Dropdown :options="formats" option-value="uri" option-text="label"  v-on:selected="selectOutputFormat" id="outputFormat" :maxItem="10" placeholder="Enter some characters" 
-          v-b-tooltip.hover="{ variant: 'info' }">
+        <Dropdown :options="formats" option-value="uri" option-text="label" v-on:selected="selectOutputFormat"
+          id="outputFormat" :maxItem="10" placeholder="Enter some characters" v-b-tooltip.hover="{ variant: 'info' }">
         </Dropdown>
       </b-form-group>
 
@@ -155,10 +156,10 @@
     mounted: function () {
       this.id = new Date().getTime();
       this.uri = "<http://melodi.irit.fr/resource/Service/dn_" + this.id + ">";
-
+      let url = this.host + 'api/formats';
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/format',
+          url: url,
         }).then((res) => {
           this.formats = res.data.rs;
 
@@ -170,10 +171,10 @@
         }).finally(() => {
           //Perform action in always
         });
-
+      url = this.host + 'api/operations';
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/operation',
+          url: url,
         }).then((res) => {
           this.operations = res.data.rs;
 
@@ -205,12 +206,12 @@
       },
       selectOutputFormat(selection) {
         this.outputFormat = selection;
-     
+
       },
 
       selectOperation(selection) {
         this.operation = selection;
-  
+
       },
 
       submitService: function () {
@@ -224,10 +225,10 @@
         formData.append("inputFormat", this.inputFormat.id);
         formData.append("outputFormat", this.outputFormat.id);
         formData.append("subject", this.subject);
-
+        let url = this.host + 'api/new-service';
         axios({
             method: 'post',
-            url: 'http://localhost:8000/api/new_service',
+            url: url,
             headers: {
               'content-Type': 'multipart/form-data'
             },

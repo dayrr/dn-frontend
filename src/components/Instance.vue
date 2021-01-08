@@ -38,17 +38,17 @@
       </b-col>
       <b-col>
         <h4> Add metadata </h4>
-        
-          Select a class:
-          <b-form-select v-model="selectedClass" v-on:change="selectClass">
-            <option v-for="(cls, idx) in classes" :key="idx" :value="cls.uri" :title="cls.comment"
-              v-b-tooltip.hover="{ variant: 'info' }">
-              {{ cls.label}} ({{cls.onto}})
-            </option>
-          </b-form-select>
+
+        Select a class:
+        <b-form-select v-model="selectedClass" v-on:change="selectClass">
+          <option v-for="(cls, idx) in classes" :key="idx" :value="cls.uri" :title="cls.comment"
+            v-b-tooltip.hover="{ variant: 'info' }">
+            {{ cls.label}} ({{cls.onto}})
+          </option>
+        </b-form-select>
 
 
-          <!--
+        <!--
           <b-list-group class="cls-list-group">
             <b-list-group-item href="#" @click="selectClass(cls)" class="flex-column align-items-start"
               v-for="cls in ontoClasses" v-bind:key="cls.uri">
@@ -60,7 +60,7 @@
             </b-list-group-item>
           </b-list-group>
           -->
-     
+
 
         <div v-show="selectedClass !== null">
           Select a property
@@ -68,7 +68,8 @@
             <b-list-group-item v-bind:disabled="prop.disabled" href="#" @click="selectProp(prop, $event)"
               class="flex-column align-items-start" v-for="prop in props" v-bind:key="prop.uri">
               <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1" v-b-tooltip.hover="{ variant: 'info' }" v-bind:title="prop.comment + ' '+ prop.uri">{{ prop.label }}
+                <h6 class="mb-1" v-b-tooltip.hover="{ variant: 'info' }" v-bind:title="prop.comment + ' '+ prop.uri">
+                  {{ prop.label }}
                 </h6>
 
               </div>
@@ -91,11 +92,11 @@
     data() {
       return {
         uri: '',
-        triples: [],       
+        triples: [],
         classes: [],
         props: [],
         selectedOnto: null,
-        selectedClass: null,       
+        selectedClass: null,
         metaInputs: [],
         count: 0,
         groups: null,
@@ -113,10 +114,10 @@
         this.uri = this.$route.query.uri;
 
 
-
+      let url = this.host + 'api/instance?uri=' + this.uri;
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/instance?uri=' + this.uri,
+          url: url,
         }).then((res) => {
           this.triples = res.data.rs;
           if (this.uri.includes("Distribution"))
@@ -143,10 +144,10 @@
           //Perform action in always
         });
 
-
+      url = this.host + 'api/props?uri=' + this.uri;
       axios({
           method: 'get',
-          url: 'http://localhost:8000/api/props?uri='+this.uri,
+          url: this.host + 'api/props?uri=' + this.uri,
         }).then((res) => {
 
           this.props = res.data.rs;
@@ -193,7 +194,7 @@
       },
 
 
-      
+
       selectClass: function () {
 
         this.props = this.classes.filter(cls => cls.uri === this.selectedClass)[0].props;
@@ -242,45 +243,6 @@
       },
 
 
-      update() {
-        this.$emit('updated', this.name, this.email, this.changedUri, this.agent)
-
-      },
-
-      search(input) {
-        const url = `http://localhost:8000/api/agent?name=${encodeURI(input)}`
-
-        return new Promise(resolve => {
-          if (input.length < 4) {
-            return resolve([])
-          }
-
-          fetch(url)
-            .then(response => response.json())
-            .then(data => {
-              // console.log(data);
-              resolve(data.rs)
-            })
-        })
-      },
-
-      getResultValue(result) {
-        return result.name
-      },
-
-      handleSubmit(result) {
-        if (result === undefined) {
-          this.changedUri = this.tempUri;
-          this.email == "";
-          this.name = this.$refs.ac.$refs.input.value;
-
-        } else {
-          this.changedUri = "<" + result.uri + ">";
-          this.email = result.email;
-          this.name = result.name;
-        }
-        this.$emit('updated', this.name, this.email, this.changedUri, this.agent)
-      }
     }
 
   }

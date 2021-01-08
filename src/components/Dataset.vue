@@ -1,8 +1,16 @@
 <template>
 
   <div>
-    <h2 class='mt-3 mb-3'> New dataset </h2>
-    <b-form @submit.prevent="">
+    <div class="row">
+      <div class="col">
+        <hr>
+      </div>
+      <h3> Create a dataset </h3>
+      <div class="col">
+        <hr>
+      </div>
+    </div>
+    <b-form @submit.prevent="" autocomplete="off">
 
       <b-card header="Dataset" variant="dark">
         <b-card-text>
@@ -12,15 +20,11 @@
               <b-form-input id="input-1" v-model="uri" disabled></b-form-input>
             </b-form-group>
 
-
             <b-form-group id="fieldset-2" description="" label="Title*" label-for="input-2" label-cols-sm="1"
               label-cols-lg="1">
               <b-form-input id="input-2" v-model="title" placeholder="Dataset title">
               </b-form-input>
             </b-form-group>
-
-
-
 
             <b-form-group id="fieldset-3" description="" label="Description*" label-for="input-3" label-cols-sm="1"
               label-cols-lg="1">
@@ -38,7 +42,6 @@
               <b-form-input id="input-4" v-model="keywords" placeholder="Keyword"></b-form-input>
             </b-form-group>
 
-
             <b-form-group id="fieldset-5" description="" label="Issued date" label-for="input-5" label-cols-sm="1"
               label-cols-lg="1">
               <b-form-datepicker id="datepicker-dateformat"
@@ -47,55 +50,51 @@
               </b-form-datepicker>
             </b-form-group>
 
-
-
-
             <b-form-group id="fieldset-6" description="" label="Note" label-for="input-6" label-cols-sm="1"
               label-cols-lg="1">
               <b-form-input id="input-6" v-model="note" placeholder="Note"></b-form-input>
             </b-form-group>
 
-
+            Localisation <div id="map" class="mapds"></div>
 
           </div>
         </b-card-text>
-
-
-
       </b-card>
-
 
       <b-card header="Creators (Authors)*">
         <button type="button" v-on:click="addAgent('creator')">+</button>
-
-        <Agent v-for="agent in creators" :key="agent.id" :agent="agent" :idxLocal="agent.idxLocal"
-          :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agent>
-
+        <b-form @submit.prevent="" autocomplete="off">
+          <Agento v-for="agent in creators" :key="agent.id" :agent="agent" :idxLocal="agent.idxLocal"
+            :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agento>
+        </b-form>
 
       </b-card>
 
       <b-card header="Publishers (Contacts)*">
         <button type="button" v-on:click="addAgent('publisher')">+</button>
-        <Agent v-for="agent in publishers" :key="agent.id" :agent="agent" :idxLocal="agent.idxLocal"
-          :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agent>
+        <b-form @submit.prevent="" autocomplete="off">
+          <Agento v-for="agent in publishers" :key="agent.id" :agent="agent" :idxLocal="agent.idxLocal"
+            :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agento>
+        </b-form>
       </b-card>
 
       <b-card header="Depositors">
         <button type="button" v-on:click="addAgent('depositor')">+</button>
-        <Agent v-for="agent in depositors" :key="agent.id" :idxLocal="agent.idxLocal" :agent="agent"
-          :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agent>
+        <b-form @submit.prevent="" autocomplete="off">
+          <Agento v-for="agent in depositors" :key="agent.id" :idxLocal="agent.idxLocal" :agent="agent"
+            :agentType="agent.agentType" :uri="agent.uri" @updated="updateAgent"></Agento>
+        </b-form>
       </b-card>
 
 
-      <b-card header=" Related publication">
+      <b-card header=" Related publications">
         <button type="button" v-on:click="addPublication()"> + </button>
-        <Publication v-for="pub in pubs" v-bind:key="pub"  :dsID="pub.dsID" @updated="updatePub" :num="pub.num" :pub="pub"
-          :authors="pub.authors"></Publication>
+        <Publicationo v-for="pub in pubs" v-bind:key="pub" :dsID="pub.dsID" @updated="updatePub" :num="pub.num"
+          :pub="pub" :authors="pub.authors"></Publicationo>
       </b-card>
-
-
-
-      <b-button block class="text-center mt-4 mb-4" type="button" size="lg" @click="submitForm" variant="primary">Create dataset</b-button>
+      
+      <b-button block class="text-center mt-4 mb-4" type="button" size="lg" @click="submitForm" variant="primary">Create
+        dataset</b-button>
 
 
     </b-form>
@@ -105,6 +104,22 @@
 
 <script>
   const axios = require('axios');
+  import "ol/ol.css";
+
+  // This is library of openlayer for handle map
+  import Map from "ol/Map";
+  import View from "ol/View";
+  import Draw from 'ol/interaction/Draw';
+  import WKT from 'ol/format/WKT';
+
+  import {
+    Tile as TileLayer,
+    Vector as VectorLayer
+  } from 'ol/layer';
+  import {
+    OSM,
+    Vector as VectorSource
+  } from 'ol/source';
 
   export default {
     data() {
@@ -116,6 +131,7 @@
         keywords: '',
         pubs: [],
         creators: [],
+        loc: '',
         authors: [],
         issuedDate: '',
         note: '',
@@ -180,102 +196,120 @@
         ]
       }
     },
+    async mounted() {
+      await this.initiateMap();
+    },
+
     created: function () {
-      
+
       this.id = new Date().getTime();
       this.uri = "<http://melodi.irit.fr/resource/Dataset/dn_" + this.id + ">";
       this.creators.push({
-        uri: "<http://melodi.irit.fr/resource/Agent/dn_" + this.id + this.count + ">",
-        agentType: "Creator",
-        name: "",
-        email: "",
-        idxLocal: this.creators.length + 1,
-        idx: this.count
+        uri: "",
       });
 
       this.count++;
-        this.publishers.push({
-        uri: "<http://melodi.irit.fr/resource/Agent/dn_" + this.id + this.count + ">",
-        agentType: "Publishers",
-        name: "",
-        email: "",
-        idxLocal: this.publishers.length + 1,
-        idx: this.count
+      this.publishers.push({
+        uri: "",
       });
       this.count++;
     },
     methods: {
-      updateAgent: function (name, email, uri, agent) {
+
+      initiateMap() {
+
+        var source = new VectorSource({
+          wrapX: false
+        });
+
+        this.vectorLayer = new VectorLayer({
+          source: source
+        });
 
 
-        agent.name = name;
-        agent.email = email;
-        agent.uri = uri;
+        // create title layer
+        var raster = new TileLayer({
+          source: new OSM(),
+        });
+        // create map with 2 layer
+        // eslint-disable-next-line no-unused-vars
+        this.map = new Map({
 
+          target: "map",
+          layers: [raster, this.vectorLayer],
+          view: new View({
+            projection: "EPSG:4326",
+            center: [3, 45],
+            zoom: 6,
+          }),
+        });
 
+        var draw; // global so we can remove it later
+        let that = this;
+
+        function addInteraction() {
+
+          draw = new Draw({
+            source: source,
+            type: "Point",
+          });
+          that.map.addInteraction(draw);
+
+        }
+
+        addInteraction();
+
+        draw.on('drawend', function (e) {
+          that.loc = e.feature.getGeometry().getCoordinates();
+          let format = new WKT();
+          that.loc = format.writeGeometry(e.feature.getGeometry());
+          that.map.removeInteraction(draw);
+
+        });
 
       },
-      updatePub: function (uri, title, issuedDate, identifier, authors, pub) {
-     
+
+
+      updateAgent: function (uri, name, email, agent) {
+        agent.uri = uri;
+        agent.name = name;
+        agent.email = email;
+
+      },
+
+      updatePub: function (uri, pub) {
         pub.uri = uri;
-        pub.title = title;
-        pub.authors = authors;
-        pub.issuedDate = issuedDate;
-        pub.identifier = identifier;
-
-
       },
 
       addPublication: function () {
         this.pubs.push({
-          dsID: this.id,
-          num: this.countpb,
           uri: '',
-          authors: [],
-          identifier: '',
-          issuedDate: '',
-          idxLocal: this.countpb
         });
-
-        this.countpb++;
       },
+
       addAgent: function (type) {
         if (type === "creator")
-
           this.creators.push({
-            uri: "<http://melodi.irit.fr/resource/Agent/dn_" + this.id + this.count + ">",
-            agentType: "Creator",
-            name: "",
-            email: "",
-            idx: this.count,
-            idxLocal: this.creators.length + 1
+            uri: ""
           });
         else if (type === "publisher")
           this.publishers.push({
-            uri: "<http://melodi.irit.fr/resource/Agent/dn_" + this.id + this.count + ">",
-            agentType: "Publisher",
-            name: "",
-            email: "",
-            idx: this.count,
-            idxLocal: this.publishers.length + 1
+            uri: ">",
+
           });
         else
           this.depositors.push({
-            uri: "<http://melodi.irit.fr/resource/Agent/dn_" + this.id + this.count + ">",
-            agentType: "Depositor",
-            name: "",
-            email: "",
-            idx: this.count,
-            idxLocal: this.depositors.length + 1
+            uri: "",
+
           });
         this.count++;
       },
       submitForm() {
         //evt.preventDefault();
-
+        let url = this.host + 'api/new-dataset';
         axios({
             method: 'post',
-            url: 'http://localhost:8000/api/new_dataset',
+            url: url,
             data: {
               uri: this.uri,
               title: this.title,
@@ -287,13 +321,21 @@
               publishers: this.publishers,
               depositors: this.depositors,
               pubs: this.pubs,
-              subject: this.subject
+              subject: this.subject,
+              loc: this.loc
             }
           }).then((res) => {
-           // alert(JSON.stringify(res.data));
-          window.open("http://localhost:8080/dataset.xhtml?persistentId="+res.data.result, '_blank');  
-          this.$router.push({ name: 'upload-files' , params: { doi: res.data.result, uri:this.uri, id:this.id}});
-            
+            // alert(JSON.stringify(res.data));
+            window.open(res.data.page, '_blank');
+            this.$router.push({
+              name: 'upload-files',
+              params: {
+                doi: res.data.doi,
+                uri: this.uri,
+                id: this.id
+              }
+            });
+
           })
           .catch((error) => {
             console.log(error)
@@ -318,3 +360,17 @@
     }
   }
 </script>
+
+<style>
+  .mapds {
+    width: 90% !important;
+    height: 300px !important;
+    margin-left: 130px;
+  }
+
+
+  .center {
+    margin: auto;
+
+  }
+</style>

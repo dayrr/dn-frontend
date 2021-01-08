@@ -39,20 +39,29 @@
 
     created: function () {
 
-      this.sparql = `SELECT * 
-  WHERE 
-  {
-    ?s ?p ?o.
-  }
-  LIMIT 100`;
+      this.sparql = `PREFIX dn: <http://melodi.irit.fr/ontologies/dn/>
 
-    },
+SELECT ?uri ?name ?desc ?input ?output ?operation 
+WHERE
+{
+?uri a dn:Service.
+?uri dn:description ?desc.
+?uri dn:name ?name.
+?uri dn:hasInputFormat ?if.
+?if rdfs:label ?input.
+?uri dn:hasOutputFormat ?of.
+?of rdfs:label ?output.
+?uri dn:performsOperation ?op.
+?op rdfs:label ?operation.
+}`;
+},
 
     methods: {
       query() {
+        let url = this.host + 'api/query?query=' + encodeURIComponent(this.sparql);
        axios({
             method: 'get',
-            url: 'http://localhost:8000/api/query?query=' + encodeURIComponent(this.sparql),
+            url: url
           }).then((res) => {
             this.triples = res.data.rs;
 

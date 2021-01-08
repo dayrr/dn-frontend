@@ -12,8 +12,8 @@
 
     <b-card header="Distribution" variant="dark">
       <b-card-text>
-        <b-form-file name="myfile" placeholder="Choose a file or drop it here..." 
-         v-model="file" drop-placeholder="Drop file here..."></b-form-file>
+        <b-form-file name="myfile" placeholder="Choose a file or drop it here..." v-model="file"
+          drop-placeholder="Drop file here..."></b-form-file>
       </b-card-text>
     </b-card>
     <b-button block class="text-center mt-4 mb-4" type="button" v-on:click="submitFile" size="lg" variant="primary">
@@ -30,11 +30,11 @@
       Defines the data used by the component
     */
     data() {
-      return {     
+      return {
         doi: '',
         file: null,
-        uri:'',
-        id:''
+        uri: '',
+        id: ''
       }
     },
 
@@ -45,34 +45,34 @@
     },
 
     methods: {
-      
+
       submitFile() {
         const formData = new FormData();
         //for (let file of this.files) {
-       //   formData.append('myfile', file) // note, no square-brackets
+        //   formData.append('myfile', file) // note, no square-brackets
         //}
         formData.append("file_uploaded", this.file);
         formData.append("pid", this.doi);
         formData.append("uri", this.uri);
         formData.append("id", this.id);
-
+        let url = this.host + 'api/new-distribution';
         axios({
             method: 'post',
-            url: 'http://localhost:8000/api/new_distribution',
+            url: url,
             headers: {
               'content-Type': 'multipart/form-data'
             },
             data: formData
-          }).then(function (rs) {         
+          }).then(function (rs) {
             if (rs.data === "ok")
-             alert("File uploaded");
+              alert("File uploaded");
             else
               alert("Upload failed");
           })
           .catch(function () {
-             alert("Upload failed. Check your connection.");
+            alert("Upload failed. Check your connection.");
           });
-          this.file = null;
+        this.file = null;
       }
     },
 

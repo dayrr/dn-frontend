@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import NewDataset from '@/components/NewDataset'
+import NewDataset from '@/components/Dataset'
 import Ontologies from '@/components/Ontologies'
-import Reference from '@/components/Reference'
+import Pub from '@/components/Publication'
 import Claim from '@/components/Claim'
 import UploadFiles from '@/components/UploadFiles'
-
 import Workflow from '@/components/Workflow'
 import Service from '@/components/Service'
 import Home from '@/components/Home'
+import Agent from '@/components/Agent'
 import UpdateKB from '@/components/UpdateKB'
 import Instance from '@/components/Instance'
 import Datasets from '@/components/Datasets'
@@ -18,8 +18,14 @@ import View from '@/components/View'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+
   routes: [   
+    {
+      path: '/agent',
+      name: 'agent',
+      component: Agent
+    },
+
     {
       path: '/new-dataset',
       name: 'new-dataset',
@@ -70,13 +76,13 @@ export default new Router({
     }, 
 
     {
-      path: '/ref',
-      name: 'ref',
-      component: Reference
+      path: '/pub',
+      name: 'pub',
+      component: Pub
     },
     {
-      path: '/ontologies',
-      name: 'ontologies',
+      path: '/onto',
+      name: 'onto',
       component: Ontologies
     },
     {
@@ -92,6 +98,12 @@ export default new Router({
     {
       path: '/query',
       name: 'query',
+      component: Query
+    },
+
+    {
+      path: '/query',
+      name: 'agents',
       component: Query
     }
   ]

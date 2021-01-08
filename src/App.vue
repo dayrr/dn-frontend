@@ -15,27 +15,33 @@
           </b-nav-item>
           <b-nav-item :to="{name: 'view', query:{cls:'publications'}}">
             Publication
-          </b-nav-item>   
+          </b-nav-item>
           <b-nav-item :to="{name: 'view', query:{cls:'services'}}">
             Service
           </b-nav-item>
-          <b-nav-item :to="{name: 'work', query:{uri:'NA'}}">
+          <b-nav-item :to="{name: 'work'}">
             Workflow
           </b-nav-item>
+
+
+      
+            <img class="logo"
+              src="https://datanoos.univ-toulouse.fr/themes/custom/bootstrap_datanoos/images/logos/logo-dataNooS-couleur.png" />
+         
 
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item-dropdown text="Administration" right>
-            <b-dropdown-item :to="{ name: 'agents' }">
+            <b-dropdown-item :to="{ name: 'agent' }">
               New Agent
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'claim' }">
               New Claim
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'new-dataset' }">
-              New dataset
+              New Dataset
             </b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'ref' }">
+            <b-dropdown-item :to="{ name: 'pub' }">
               New Publication
             </b-dropdown-item>
             <b-dropdown-item :to="{ name: 'service' }">
@@ -52,6 +58,9 @@
             <b-dropdown-item :to="{name: 'query'}">
               Query KB
             </b-dropdown-item>
+             <b-dropdown-item :to="{name: 'onto'}">
+              Ontologies
+            </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
@@ -64,16 +73,16 @@
               Dataverse
             </b-dropdown-item>
             <b-dropdown-item v-on:click="opendv" href="#">
-              Callisto
+              Calisto
             </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
-        
-         <b-navbar-nav>
-         <b-nav-item :to="{name: 'work', query:{uri:'NA'}}">
+
+        <b-navbar-nav>
+          <b-nav-item :to="{name: 'work', query:{uri:'NA'}}">
             Help
           </b-nav-item>
-           </b-navbar-nav>
+        </b-navbar-nav>
 
       </b-navbar>
 
@@ -82,9 +91,8 @@
       <router-view />
     </div>
 
-     <footer class="footer">
-      <a href="https://datanoos.univ-toulouse.fr/"> <img class="logo" src="https://datanoos.univ-toulouse.fr/themes/custom/bootstrap_datanoos/images/logos/logo-dataNooS-couleur.png"/>
-     from DATA to a NOOSphere - 2021 </a>
+    <footer class="footer">
+      <a href="https://datanoos.univ-toulouse.fr/"> DataNOOS - from DATA to a NOOSphere - 2021 </a>
     </footer>
   </div>
 </template>
@@ -96,11 +104,11 @@
       },
 
       open: function () {
-        window.open("http://localhost:8000/graphdb/", '_blank');
+        window.open(this.graphdb, '_blank');
       },
 
       opendv: function () {
-        window.open("'http://melodi.irit.fr/:8080", '_blank');
+        window.open(this.dataverse, '_blank');
 
       }
     }
