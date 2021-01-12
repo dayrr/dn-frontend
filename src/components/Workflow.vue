@@ -55,9 +55,9 @@
             :title="op.desc" v-b-tooltip.hover="{ variant: 'info' }">
             {{ op.name }}
           </option>
-        </b-form-select> 
+        </b-form-select>
         <div v-if='hasParameters'> Parameters:
-        <input type="text" class="form-control" v-model="params"  name="parameters"> </div>
+          <input type="text" class="form-control" v-model="params" name="parameters"> </div>
         <b-button :disabled="Object.keys(selectedOp).length == 0" class="text-center mt-4 mb-4 ml-2 mr-sm-2"
           type="button" v-on:click="addNode" size="lg" variant="primary">
           Add to workflow</b-button>
@@ -77,11 +77,13 @@
           <li>Status: {{this.selectedNode.status}}</li>
           <li>Output data: <a v-bind:href="this.host + 'api/download?fn='+ this.selectedNode.outputdata">
               <b> {{this.selectedNode.outputdata}} </b> </a> </li>
-          <img v-if="image" v-bind:src="this.host + 'api/download?fn='+ this.selectedNode.outputdata" />
-            <b-form-textarea disabled v-if="!image" v-model="outputdataPreview" rows="3" max-rows="10">
-            </b-form-textarea>
+        
+        </ul> 
+        Preview
+         <img v-if="image" v-bind:src="this.host + 'api/download?fn='+ this.selectedNode.outputdata" />
+   
+          <div v-html="tbl" v-if="!image" class="preview"> </div>
 
-        </ul>
       </b-alert>
     </div>
   </div>
@@ -117,7 +119,8 @@
         distribution: {},
         dist_size: 0,
         image: false,
-        outputdataPreview:'',
+        outputdataPreview: '',
+        tbl: null,
         hasParameters: false,
         nodes: [
 
@@ -266,7 +269,7 @@
 
       search(input) {
         //this.host + 'api/datasets?value=' + this.searchValue + "&search=" + this.search,
-        let url = this.host + 'api/dataset?search=title&value='+ encodeURI(input)
+        let url = this.host + 'api/dataset?search=title&value=' + encodeURI(input)
 
         return new Promise(resolve => {
           if (input.length < 4) {
@@ -312,17 +315,35 @@
 
       },
 
+      createTable(tableData) {
+        let table = document.createElement('table');
+        let tableBody = document.createElement('tbody');
 
+        tableData.forEach(function (rowData) {
+          let row = document.createElement('tr');
+
+          rowData.split(",").forEach(function (cellData) {
+            let cell = document.createElement('td');
+            cell.appendChild(document.createTextNode(cellData));
+            row.appendChild(cell);
+          });
+
+          tableBody.appendChild(row);
+        });
+        table.setAttribute("class", "preview");
+        table.appendChild(tableBody);
+        return table.outerHTML;
+      },
 
       setDesc: function () {
         // this.desc = this.selectedOp.desc;
         this.desc = true;
         this.params = "";
 
-        if(this.selectedOp.desc.toLowerCase().includes("parameter"))
+        if (this.selectedOp.desc.toLowerCase().includes("parameter"))
           this.hasParameters = true;
         else
-           this.hasParameters = false;
+          this.hasParameters = false;
       },
 
 
@@ -369,21 +390,21 @@
         this.network.on("selectNode", function (params) {
 
           that.selectedNode = that.nodes.find(node => node.id === params.nodes[0]);
-          if (that.selectedNode.outputdata.includes(".PNG"))
-          {
+          if (that.selectedNode.outputdata.includes(".PNG")) {
             that.image = true;
             that.outputdataPreview = '';
-          }
-          else
-          {
+          } else {
             that.image = false;
 
             axios({
-                method: 'get',
-                url: that.host + 'api/preview?fn=' + that.selectedNode.outputdata
-              }).then((res) => {
-                that.outputdataPreview =  res.data;
-              });          
+              method: 'get',
+              url: that.host + 'api/preview?fn=' + that.selectedNode.outputdata
+            }).then((res) => {
+              that.outputdataPreview = res.data;
+              that.tbl = that.createTable(res.data.split("\n"));
+          
+           
+            });
           }
 
           that.bottomDesc = true;
