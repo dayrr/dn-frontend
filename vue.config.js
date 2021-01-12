@@ -5,7 +5,7 @@ module.exports = {
   outputDir: 'dist',
   assetsDir: 'static',
   publicPath: process.env.NODE_ENV === 'production'
-  ? 'http://localhost:8000/datanoos/'
+  ? 'http://melodi.irit.fr/datanoos/'
   : '/',
 
   // baseUrl: IS_PRODUCTION

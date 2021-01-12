@@ -169,6 +169,8 @@
 
       search(event) {
 
+        if (event.target.outerText.length>20)
+          return;
         this.$router.push({
           name: 'datasets',
           params: {

@@ -6,6 +6,8 @@
     <b-row>
       <b-col cols="9">
         <h4>{{uri}} <div v-show="distribution">
+            <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="downloadDis" variant="primary">
+              Download distribution</b-button>
             <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
               Create a workflow</b-button>
           </div>
@@ -24,14 +26,11 @@
 
         <div v-show="metaInputs.length != 0">
           <h4> New metadata </h4>
+          <MetaInput @updated="updateMeta" v-for="metaInput in metaInputs" v-bind:key="metaInput.idx"
+            :metaInput="metaInput">
+          </MetaInput>
 
-          <div v-for="(props, domain) in groups" v-bind:key="props">
-            <MetaInput :props="props" :domain="domain">
-            </MetaInput>
-            <hr>
-          </div>
-
-          <b-button block class="text-center mt-4 mb-4" type="button" size="lg" variant="primary">
+          <b-button block class="text-center mt-4 mb-4" v-on:click="submit" type="button" size="lg" variant="primary">
             Submit</b-button>
         </div>
 
@@ -46,21 +45,6 @@
             {{ cls.label}} ({{cls.onto}})
           </option>
         </b-form-select>
-
-
-        <!--
-          <b-list-group class="cls-list-group">
-            <b-list-group-item href="#" @click="selectClass(cls)" class="flex-column align-items-start"
-              v-for="cls in ontoClasses" v-bind:key="cls.uri">
-              <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1" v-b-tooltip.hover="{ variant: 'info' }" v-bind:title="cls.comment">{{ cls.label }}</h6>
-
-              </div>
-
-            </b-list-group-item>
-          </b-list-group>
-          -->
-
 
         <div v-show="selectedClass !== null">
           Select a property
@@ -107,44 +91,16 @@
       }
 
     },
-    created: function () {
+    mounted: function () {
       if (this.$route.params.uri !== undefined)
         this.uri = this.$route.params.uri;
       else
         this.uri = this.$route.query.uri;
 
 
-      let url = this.host + 'api/instance?uri=' + this.uri;
-      axios({
-          method: 'get',
-          url: url,
-        }).then((res) => {
-          this.triples = res.data.rs;
-          if (this.uri.includes("Distribution"))
-            for (let i = 0; i < this.triples.length; i++) {
-              //console.log(this.triples[i]);
-              if (this.triples[i].property.includes("download")) {
-                this.download = this.triples[i].value;
-                this.format =
-                  this.distribution = true;
-              }
-              //console.log(this.triples[i]);
-              if (this.triples[i].property.includes("hasFormat")) {
-                this.format = this.triples[i].value;
-              }
+      this.loadTriples();
 
-            }
-
-
-        })
-        .catch((error) => {
-          console.log(error)
-          // error.response.status Check status code
-        }).finally(() => {
-          //Perform action in always
-        });
-
-      url = this.host + 'api/props?uri=' + this.uri;
+      let url = this.host + 'api/props?uri=' + this.uri;
       axios({
           method: 'get',
           url: this.host + 'api/props?uri=' + this.uri,
@@ -171,6 +127,68 @@
     },
 
     methods: {
+
+      loadTriples: function () {  
+        let url = this.host + 'api/instance?uri=' + this.uri;
+        axios({
+            method: 'get',
+            url: url,
+          }).then((res) => {
+            this.triples = res.data.rs;
+            if (this.uri.includes("Distribution"))
+              for (let i = 0; i < this.triples.length; i++) {
+                //console.log(this.triples[i]);
+                if (this.triples[i].property.includes("download")) {
+                  this.download = this.triples[i].value;
+                  this.format =
+                    this.distribution = true;
+                }
+                //console.log(this.triples[i]);
+                if (this.triples[i].property.includes("hasFormat")) {
+                  this.format = this.triples[i].value;
+                }
+
+              }
+
+
+          })
+          .catch((error) => {
+            console.log(error)
+            // error.response.status Check status code
+          }).finally(() => {
+            //Perform action in always
+          });
+
+      },
+
+      submit: function () {
+
+        axios({
+            method: 'post',
+            url: this.host + 'api/new-meta',
+            data: {
+              uri: this.uri,
+              meta: this.metaInputs
+            }
+          }).then((res) => {
+            if (res.data.result === "ok")
+              alert("Metadata added");
+              this.metaInputs = [];
+              this.loadTriples();
+
+          })
+          .catch((error) => {
+            alert("Metadata addition failed! Error: " + error);
+          }).finally(() => {
+            //Perform action in always
+          });
+
+      },
+
+      updateMeta: function (value, metaInput) {
+        metaInput.value = value;
+      },
+
       addWorkflow: function () {
         this.$router.push({
           name: 'work',
@@ -181,6 +199,18 @@
           }
         });
       },
+
+      downloadDis: function () {
+        this.$router.push({
+          name: 'work',
+          params: {
+            uri: this.uri,
+            format: this.format,
+            url: this.download
+          }
+        });
+      },
+
 
       groupBy: function (array, key) {
         const result = {}
@@ -209,17 +239,17 @@
         this.metaInputs.push({
           'idx': this.count,
           'label': prop.label,
+          'uri': prop.uri,
           'range': prop.range,
           'comment': prop.comment,
-          'domain': prop.domain,
-          'domainLabel': prop.domainLabel
+          'value': ''
         });
         this.count++;
 
-        this.groups = this.groupBy(this.metaInputs, 'domain');
+        //this.groups = this.groupBy(this.metaInputs, 'domain');
 
         //event.target.disabled = true;
-        prop.disabled = true;
+        // prop.disabled = true;
 
       },
 

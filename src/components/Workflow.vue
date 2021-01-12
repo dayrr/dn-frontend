@@ -55,8 +55,9 @@
             :title="op.desc" v-b-tooltip.hover="{ variant: 'info' }">
             {{ op.name }}
           </option>
-        </b-form-select> Parameters:
-        <input type="text" class="form-control" v-model="params" name="parameters">
+        </b-form-select> 
+        <div v-if='hasParameters'> Parameters:
+        <input type="text" class="form-control" v-model="params"  name="parameters"> </div>
         <b-button :disabled="Object.keys(selectedOp).length == 0" class="text-center mt-4 mb-4 ml-2 mr-sm-2"
           type="button" v-on:click="addNode" size="lg" variant="primary">
           Add to workflow</b-button>
@@ -77,6 +78,9 @@
           <li>Output data: <a v-bind:href="this.host + 'api/download?fn='+ this.selectedNode.outputdata">
               <b> {{this.selectedNode.outputdata}} </b> </a> </li>
           <img v-if="image" v-bind:src="this.host + 'api/download?fn='+ this.selectedNode.outputdata" />
+            <b-form-textarea disabled v-if="!image" v-model="outputdataPreview" rows="3" max-rows="10">
+            </b-form-textarea>
+
         </ul>
       </b-alert>
     </div>
@@ -113,6 +117,8 @@
         distribution: {},
         dist_size: 0,
         image: false,
+        outputdataPreview:'',
+        hasParameters: false,
         nodes: [
 
         ],
@@ -260,7 +266,7 @@
 
       search(input) {
         //this.host + 'api/datasets?value=' + this.searchValue + "&search=" + this.search,
-        let url = this.host + 'api/datasets?search=title&value='+ encodeURI(input)
+        let url = this.host + 'api/dataset?search=title&value='+ encodeURI(input)
 
         return new Promise(resolve => {
           if (input.length < 4) {
@@ -311,6 +317,12 @@
       setDesc: function () {
         // this.desc = this.selectedOp.desc;
         this.desc = true;
+        this.params = "";
+
+        if(this.selectedOp.desc.toLowerCase().includes("parameter"))
+          this.hasParameters = true;
+        else
+           this.hasParameters = false;
       },
 
 
@@ -358,9 +370,22 @@
 
           that.selectedNode = that.nodes.find(node => node.id === params.nodes[0]);
           if (that.selectedNode.outputdata.includes(".PNG"))
+          {
             that.image = true;
+            that.outputdataPreview = '';
+          }
           else
+          {
             that.image = false;
+
+            axios({
+                method: 'get',
+                url: that.host + 'api/preview?fn=' + that.selectedNode.outputdata
+              }).then((res) => {
+                that.outputdataPreview =  res.data;
+              });          
+          }
+
           that.bottomDesc = true;
         });
 
