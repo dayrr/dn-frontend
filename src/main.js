@@ -21,6 +21,8 @@ import { ModelSelect } from 'vue-search-select';
 import VueGraph from 'vue-graph';
 import VueWordCloud from 'vuewordcloud';
 import VueCodemirror from 'vue-codemirror';
+import VueConfirmDialog from 'vue-confirm-dialog'
+
 // require styles
 import 'codemirror/lib/codemirror.css'
 // require more codemirror resource...
@@ -31,6 +33,9 @@ Vue.use(VueCodemirror, /* {
 } */)
 
 Vue.component(VueWordCloud.name, VueWordCloud);
+Vue.use(VueConfirmDialog)
+Vue.component('vue-confirm-dialog', VueConfirmDialog.default)
+
 Vue.use(VueGraph);
 Vue.use(Dropdown);
 Vue.use(ModelSelect);

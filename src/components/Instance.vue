@@ -5,7 +5,7 @@
 
     <b-row>
       <b-col cols="9">
-        <h4>{{uri}} <div v-show="distribution">
+        <h4><a target="_blank" v-bind:href="graphdb+'resource?uri='+uri"> {{uri}} </a> <div v-show="distribution">
             <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="downloadDis" variant="primary">
               Download distribution</b-button>
             <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">

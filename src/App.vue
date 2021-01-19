@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <vue-confirm-dialog></vue-confirm-dialog>
     <div>
       <b-navbar type="dark" variant="dark">
         <b-navbar-nav>
@@ -47,6 +48,13 @@
             <b-dropdown-item :to="{ name: 'service' }">
               New Service
             </b-dropdown-item>
+                 <b-dropdown-item :to="{ name: 'import-meta' }">
+             Import datasets
+            </b-dropdown-item>
+            <b-dropdown-item v-on:click="openExport" href="#">
+             Export datasets
+            </b-dropdown-item>
+
           </b-nav-item-dropdown>
         </b-navbar-nav>
 
@@ -110,7 +118,14 @@
       opendv: function () {
         window.open(this.dataverse, '_blank');
 
+      },
+
+       openExport: function () {
+        
+        window.open(this.host + 'api/datasets', '_blank');
+
       }
+
     }
 
   }

@@ -14,12 +14,19 @@ import Instance from '@/components/Instance'
 import Datasets from '@/components/Datasets'
 import Query from '@/components/Query'
 import View from '@/components/View'
+import ImportMeta from '@/components/ImportMeta'
 
 Vue.use(Router)
 
 export default new Router({
 
-  routes: [   
+  routes: [  
+    {
+      path: '/import-meta',
+      name: 'import-meta',
+      component: ImportMeta
+    },
+
     {
       path: '/agent',
       name: 'agent',

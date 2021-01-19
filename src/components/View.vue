@@ -11,7 +11,7 @@
   const axios = require('axios');
 
   export default {
-    name: "View",
+    name: "ViewInstance",
     data() {
       return {
         tbl: [],

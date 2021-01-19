@@ -16,6 +16,14 @@
           drop-placeholder="Drop file here..."></b-form-file>
       </b-card-text>
     </b-card>
+
+      <b-form-group label="Format*" label-cols-sm="1" label-cols-lg="1">
+        <Dropdown :options="formats" option-value="uri" option-text="label" v-on:selected="selectFormat"
+          id="outputFormat" :maxItem="10" placeholder="Enter some characters" v-b-tooltip.hover="{ variant: 'info' }">
+        </Dropdown>
+      </b-form-group>
+
+
     <b-button block class="text-center mt-4 mb-4" type="button" v-on:click="submitFile" size="lg" variant="primary">
       Upload files</b-button>
 
@@ -34,7 +42,8 @@
         doi: '',
         file: null,
         uri: '',
-        id: ''
+        id: '',
+        formats:[]
       }
     },
 
@@ -42,6 +51,22 @@
       this.doi = this.$route.params.doi;
       this.uri = this.$route.params.uri;
       this.id = this.$route.params.id;
+      let url = this.host + 'api/formats';
+      axios({
+          method: 'get',
+          url: url,
+        }).then((res) => {
+          this.formats = res.data.rs;
+
+
+        })
+        .catch((error) => {
+          console.log(error)
+          // error.response.status Check status code
+        }).finally(() => {
+          //Perform action in always
+        });
+
     },
 
     methods: {
