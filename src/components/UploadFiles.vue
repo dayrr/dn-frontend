@@ -12,17 +12,20 @@
 
     <b-card header="Distribution" variant="dark">
       <b-card-text>
+          <b-form-group autocomplete="off" label="Upload file*" label-cols-sm="1" label-cols-lg="1">
         <b-form-file name="myfile" placeholder="Choose a file or drop it here..." v-model="file"
           drop-placeholder="Drop file here..."></b-form-file>
-      </b-card-text>
-    </b-card>
-
-      <b-form-group label="Format*" label-cols-sm="1" label-cols-lg="1">
+          </b-form-group>
+      </b-card-text> 
+        <b-form-group autocomplete="off" label="Format*" label-cols-sm="1" label-cols-lg="1">
         <Dropdown :options="formats" option-value="uri" option-text="label" v-on:selected="selectFormat"
-          id="outputFormat" :maxItem="10" placeholder="Enter some characters" v-b-tooltip.hover="{ variant: 'info' }">
+          id="format" :maxItem="10" placeholder="Enter some characters" v-b-tooltip.hover="{ variant: 'info' }">
         </Dropdown>
       </b-form-group>
 
+    </b-card>
+
+   
 
     <b-button block class="text-center mt-4 mb-4" type="button" v-on:click="submitFile" size="lg" variant="primary">
       Upload files</b-button>
@@ -43,6 +46,7 @@
         file: null,
         uri: '',
         id: '',
+        format:{},
         formats:[]
       }
     },
@@ -67,9 +71,20 @@
           //Perform action in always
         });
 
+
+      document.getElementsByName("dropdown")[0].className = "form-control";
+      document.getElementsByName("dropdown")[0].autocomplete = "off";
+
     },
 
     methods: {
+
+        selectFormat(selection) {
+        
+        this.format = selection;
+
+      },
+
 
       submitFile() {
         const formData = new FormData();
@@ -80,6 +95,7 @@
         formData.append("pid", this.doi);
         formData.append("uri", this.uri);
         formData.append("id", this.id);
+        formData.append("format", this.format.id);
         let url = this.host + 'api/new-distribution';
         axios({
             method: 'post',

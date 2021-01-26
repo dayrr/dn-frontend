@@ -49,10 +49,10 @@
               New Service
             </b-dropdown-item>
                  <b-dropdown-item :to="{ name: 'import-meta' }">
-             Import datasets
+             Import Datasets
             </b-dropdown-item>
             <b-dropdown-item v-on:click="openExport" href="#">
-             Export datasets
+             Export Datasets
             </b-dropdown-item>
 
           </b-nav-item-dropdown>

@@ -1,12 +1,22 @@
 <template>
   <div>
     <h3> Import metadata from data.gouv.fr</h3>
+
+
+
+
     <div style="width:600px; margin:auto;">
-      <b-input-group>
-        <b-form-input size="sm" class="mr-sm-2" v-model="searchText" placeholder="Search"></b-form-input>
-        <b-button size="sm" class="my-2 my-sm-0" v-on:click="searchTitle" type="button">Search</b-button>
-      </b-input-group>
+      <b-form-group id="fieldset-1"
+        description="Search for datasets and then select the dataset metadata to be imported"
+        label-for="input-1" label-cols-sm="1" label-cols-lg="1">
+        <b-input-group>
+          <b-form-input size="sm" class="mr-sm-2" v-model="searchText" placeholder="Search"></b-form-input>
+          <b-button size="sm" class="my-2 my-sm-0" v-on:click="searchTitle" type="button">Search</b-button>
+        </b-input-group>
+      </b-form-group>
     </div> <br />
+
+
     <b-table id="harvest" striped sticky-header sortable hover :items="tbl" @row-clicked="importMeta" class="pointer">
     </b-table>
 
@@ -27,7 +37,9 @@
     name: "ImportMeta",
     data() {
       return {
-        tbl: [],
+        tbl: [{
+          title: "No data"
+        }],
         cls: '',
         searchText: '',
         triples: []
@@ -102,7 +114,7 @@
 
       importMeta(record, index) {
         this.$confirm({
-          message: 'Would you like to import metadata for the dataset: \n' + record.title + '</b>?',
+          message: 'Would you like to import metadata for the dataset: \n' + record.title + '?',
           button: {
             no: 'No',
             yes: 'Yes'
@@ -118,7 +130,37 @@
                   url: this.host + 'api/import-meta?id=' + record.id,
                 }).then((res) => {
 
-                  alert(res.data.rs);
+                  if (res.data === "ok") {
+                    alert("Metadata imported!");
+                    let url = this.host + 'api/dataset?value=' + this.searchText + "&search=title";
+                    this.tbl = [];
+                    axios({
+                        method: 'get',
+                        url: url
+                      }).then((res) => {
+                        this.triples = [];
+                        let that = this;
+
+                        res.data.rs.forEach(function (ds) {
+                          let d = {};
+                          //d.uri = ds.uri;
+                          d.title = ds.title;
+                          d.description = ds.description;
+                          d.issued = ds.issued;
+                          that.triples.push(d);
+
+                        });
+
+
+                      })
+                      .catch((error) => {
+                        console.log(error)
+                        // error.response.status Check status code
+                      }).finally(() => {
+                        //Perform action in always
+                      });
+                  } else
+                    alert("Metadata importation failed!");
 
                 })
                 .catch((error) => {
