@@ -1,14 +1,17 @@
 <template>
   <div>
-    <h3> Import metadata from data.gouv.fr</h3>
-
+    <h3> Import metadata</h3>
+    <b-form-group label="From">
+      <b-form-radio-group id="radio-group-1" v-model="site" :options="options" name="radio-options">
+      </b-form-radio-group>
+    </b-form-group>
 
 
 
     <div style="width:600px; margin:auto;">
       <b-form-group id="fieldset-1"
-        description="Search for datasets and then select the dataset metadata to be imported"
-        label-for="input-1" label-cols-sm="1" label-cols-lg="1">
+        description="Search for datasets and then select the dataset metadata to be imported" label-for="input-1"
+        label-cols-sm="1" label-cols-lg="1">
         <b-input-group>
           <b-form-input size="sm" class="mr-sm-2" v-model="searchText" placeholder="Search"></b-form-input>
           <b-button size="sm" class="my-2 my-sm-0" v-on:click="searchTitle" type="button">Search</b-button>
@@ -41,20 +44,38 @@
           title: "No data"
         }],
         cls: '',
+        site: 'dataverse.ird.fr',
         searchText: '',
-        triples: []
+      
+        triples: [],
+        options: [{
+            text: 'data.gouv.fr',
+            value: 'data.gouv.fr',
+            url: 'https://www.data.gouv.fr/api/1/datasets/?page=0&page_size=20&q='
+
+          },
+          {
+            text: 'dataverse.ird.fr',
+            value: 'dataverse.ird.fr',
+            url: 'https://dataverse.ird.fr/api/search?type=dataset&q='
+          }
+
+        ]
       }
     },
 
 
     methods: {
       searchTitle() {
+        let site = this.options.find( record => record.value === this.site);
+        console.log(site);
         let url = this.host + 'api/dataset?value=' + this.searchText + "&search=title";
         this.tbl = [];
+        console.log(site);
 
         axios({
             method: 'get',
-            url: 'https://www.data.gouv.fr/api/1/datasets/?page=0&page_size=20&q=' + this.searchText
+            url: site.url + this.searchText
           }).then((res) => {
             let that = this;
             if (res.data.data.length === 0) {
@@ -63,17 +84,29 @@
               }];
               return;
             }
-            res.data.data.forEach(function (ds) {
-              let d = {};
-              d.id = ds.id;
-              d.title = ds.title;
-              d.description = ds.description;
-              d.issued = ds.last_modified;
-              that.tbl.push(d);
+            if (!this.site.includes("dataverse"))
+              res.data.data.forEach(function (ds) {
+                let d = {};
+                d.id = ds.id;
+                d.title = ds.title;
+                d.description = ds.description;
+                d.issued = ds.last_modified;
+                that.tbl.push(d);
 
-            });
+              });
+            else
+              res.data.data.items.forEach(function (ds) {
+                let d = {};
+                d.id = ds.global_id;
+                d.title = ds.name;
+                d.description = ds.description;
+                d.issued = ds.published_at;
+                that.tbl.push(d);
 
-            console.log(res.data.data);
+              });
+
+
+
 
           })
           .catch((error) => {
@@ -114,7 +147,7 @@
 
       importMeta(record, index) {
         this.$confirm({
-          message: 'Would you like to import metadata for the dataset: \n' + record.title + '?',
+          message: 'Would you like to import metadata for the dataset: \n' + record.title + '\n from ' + this.site +   '?',
           button: {
             no: 'No',
             yes: 'Yes'
@@ -127,7 +160,7 @@
             if (confirm) {
               axios({
                   method: 'get',
-                  url: this.host + 'api/import-meta?id=' + record.id,
+                  url: this.host + 'api/import-meta?id=' + record.id + '&site=' +  this.site,
                 }).then((res) => {
 
                   if (res.data === "ok") {
