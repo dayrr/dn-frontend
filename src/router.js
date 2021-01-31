@@ -15,12 +15,18 @@ import Datasets from '@/components/Datasets'
 import Query from '@/components/Query'
 import View from '@/components/View'
 import ImportMeta from '@/components/ImportMeta'
-
+import HarvestSites from '@/components/HarvestSites'
 Vue.use(Router)
 
 export default new Router({
 
-  routes: [  
+  routes: [
+    {
+      path: '/harvest-sites',
+      name: 'harvest-sites',
+      component: HarvestSites
+    },
+
     {
       path: '/import-meta',
       name: 'import-meta',

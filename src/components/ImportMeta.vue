@@ -2,9 +2,15 @@
   <div>
     <h3> Import metadata</h3>
     <b-form-group label="From">
-      <b-form-radio-group id="radio-group-1" v-model="site" :options="options" name="radio-options">
-      </b-form-radio-group>
-    </b-form-group>
+      <b-form-select v-model="site">
+            <option v-for="(cls, idx) in sites" :key="idx" :value="cls.name" :title="cls.type"
+              v-b-tooltip.hover="{ variant: 'info' }">
+              {{ cls.name}}
+            </option>
+          </b-form-select>
+        </b-form-group>
+
+    
 
 
 
@@ -46,28 +52,15 @@
         cls: '',
         site: 'dataverse.ird.fr',
         searchText: '',
-      
         triples: [],
-        options: [{
-            text: 'data.gouv.fr',
-            value: 'data.gouv.fr',
-            url: 'https://www.data.gouv.fr/api/1/datasets/?page=0&page_size=20&q='
-
-          },
-          {
-            text: 'dataverse.ird.fr',
-            value: 'dataverse.ird.fr',
-            url: 'https://dataverse.ird.fr/api/search?type=dataset&q='
-          }
-
-        ]
+        sites: []        
       }
     },
 
 
     methods: {
       searchTitle() {
-        let site = this.options.find( record => record.value === this.site);
+        let site = this.sites.find(record => record.name === this.site);
         console.log(site);
         let url = this.host + 'api/dataset?value=' + this.searchText + "&search=title";
         this.tbl = [];
@@ -84,7 +77,7 @@
               }];
               return;
             }
-            if (!this.site.includes("dataverse"))
+            if (site.type!="dataverse")
               res.data.data.forEach(function (ds) {
                 let d = {};
                 d.id = ds.id;
@@ -147,7 +140,8 @@
 
       importMeta(record, index) {
         this.$confirm({
-          message: 'Would you like to import metadata for the dataset: \n' + record.title + '\n from ' + this.site +   '?',
+          message: 'Would you like to import metadata for the dataset: \n' + record.title + '\n from ' + this.site +
+            '?',
           button: {
             no: 'No',
             yes: 'Yes'
@@ -160,7 +154,7 @@
             if (confirm) {
               axios({
                   method: 'get',
-                  url: this.host + 'api/import-meta?id=' + record.id + '&site=' +  this.site,
+                  url: this.host + 'api/import-meta?id=' + record.id + '&site=' + this.site,
                 }).then((res) => {
 
                   if (res.data === "ok") {
@@ -234,6 +228,24 @@
 
     mounted() {
 
-    },
+      let url = this.host + 'api/sites';
+      axios({
+          method: 'get',
+          url: url,
+        }).then((res) => {
+
+          this.sites = res.data;
+        })
+        .catch((error) => {
+          console.log(error)
+          // error.response.status Check status code
+        }).finally(() => {
+          //Perform action in always
+        });
+    }
+
+
+
+
   };
 </script>

@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  dns: 
+    image: dnfront
+    hostname: dns
+    ports:
+      - "6666:80"
+    environment:
+      ENDPOINT_URL: http://melodi.irit.fr #the external IP/domain of host to access Strabon endpoint 
+      HOST_NAME: postgis  #the (above)  PostGIS hostname
+      PORT_NUM: 5432    #the above PostGIS port 
+      DB_PASS: melodiH2020   #the (above)  PostGIS pass: POSTGRES_PASS
+      DB_USER: candela  #the (above)  PostGIS user:   POSTGRES_USER
+      ADMIN_PASS: melodiH2020 #tomcat admin password
+

@@ -2,14 +2,67 @@
   <div>
 
 
+    <b-row v-if="!view" v-show="!view">
+      <h3>{{dataset.title}}
+        <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="showTriples" variant="primary">
+          Triples mode</b-button>
+      </h3>
 
-    <b-row>
+      <b-list-group>
+        <b-list-group-item>Description: {{dataset.description}}</b-list-group-item>
+        <b-list-group-item>Subject: {{dataset.subject}}</b-list-group-item>
+        <b-list-group-item>Publication Date: {{dataset.issued}}</b-list-group-item>
+        <b-list-group-item>Authors: <div v-for="(author, index) in dataset.creators" :key="index"> <a
+              v-bind:href="author.uri"> {{author.name}} </a></div>
+        </b-list-group-item>
+        <b-list-group-item>Depositors: <div v-for="(depositor, index) in dataset.depositors" :key="index"> <a
+              v-bind:href="depositor.uri"> {{depositor.name}} </a></div>
+        </b-list-group-item>
+
+        <b-list-group-item>Publisers: <div v-for="(publisher, index) in dataset.publishers" :key="index"> <a
+              v-bind:href="publisher.uri"> {{publisher.name}} </a></div>
+        </b-list-group-item>
+
+
+        <b-list-group-item>Keywords: <div v-for="(key, index) in dataset.keywords" :key="index"> <a
+              v-bind:href="key.keyword"> {{key.keyword}} </a></div>
+        </b-list-group-item>
+
+        <b-list-group-item>Keywords: <div v-for="(key, index) in dataset.keywords" :key="index"> <a
+              v-bind:href="key.keyword"> {{key.keyword}} </a></div>
+        </b-list-group-item>
+
+        <b-list-group-item>Note: {{dataset.note}}</b-list-group-item>
+        <b-list-group-item>Related publications: <div v-for="(pub, index) in dataset.publication" :key="index"> <a
+              v-bind:href="pub.uri"> {{pub.title}}. {{pub.issued}}. {{pub.DOI}} </a></div>
+        </b-list-group-item>
+        <b-list-group-item>
+          Localisation <div id="map" class="mapds"></div>
+        </b-list-group-item>
+
+
+
+
+
+      </b-list-group>
+
+
+
+    </b-row>
+
+    <b-row v-show="view">
       <b-col cols="9">
-        <h4><a target="_blank" v-bind:href="graphdb+'resource?uri='+uri"> {{uri}} </a> <div v-show="distribution">
-            <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="downloadDis" variant="primary">
+        <h4><a target="_blank" v-bind:href="graphdb+'resource?uri='+uri"> {{uri}} </a>
+          <div v-show="distribution">
+            <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="downloadDis" variant="primary">
               Download distribution</b-button>
-            <b-button class="text-center mt-4 mb-4" type="button" size="lg" v-on:click="addWorkflow" variant="primary">
+            <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="addWorkflow" variant="primary">
               Create a workflow</b-button>
+
+          </div>
+          <div v-show="uri.includes('Dataset')">
+            <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="showTriples" variant="primary">
+              Resume mode</b-button>
           </div>
         </h4>
         <div class="accordion" role="tablist">
@@ -71,6 +124,31 @@
 
 <script>
   const axios = require('axios');
+  import "ol/ol.css";
+
+  // This is library of openlayer for handle map
+  import Map from "ol/Map";
+  import View from "ol/View";
+  import Draw from 'ol/interaction/Draw';
+  import WKT from 'ol/format/WKT';
+  import {
+    Fill,
+    Stroke,
+    Style,
+    RegularShape,
+    Icon
+  } from 'ol/style';
+
+
+  import {
+    Tile as TileLayer,
+    Vector as VectorLayer
+  } from 'ol/layer';
+  import {
+    OSM,
+    Vector as VectorSource
+  } from 'ol/source';
+
   export default {
     name: 'Instance',
     data() {
@@ -86,12 +164,15 @@
         groups: null,
         distribution: false,
         download: '',
-        format: ''
+        format: '',
+        view: true,
+        dataset: {},
+        map: null
 
       }
 
     },
-    mounted: function () {
+    async mounted() {
       if (this.$route.params.uri !== undefined)
         this.uri = this.$route.params.uri;
       else
@@ -99,6 +180,7 @@
 
 
       this.loadTriples();
+
 
       let url = this.host + 'api/props?uri=' + this.uri;
       axios({
@@ -127,14 +209,40 @@
     },
 
     methods: {
+      showTriples: function () {
+        this.view = !this.view;
+        if (this.view)
+          this.map.setTarget(null);
 
-      loadTriples: function () {  
+        else {
+          this.map.setTarget("map");
+
+          let that= this;
+          setTimeout(function () {
+            that.initiateMap();
+          }, 1000);
+
+        }
+      },
+
+      loadTriples: function () {
         let url = this.host + 'api/instance?uri=' + this.uri;
         axios({
             method: 'get',
             url: url,
           }).then((res) => {
             this.triples = res.data.rs;
+            if (this.uri.includes("Dataset")) {
+              this.view = false;
+              axios({
+                method: 'get',
+                url: this.host + 'api/show-dataset?uri=' + this.uri,
+              }).then((res) => {
+                this.dataset = res.data.rs;
+                this.initiateMap();
+              });
+            }
+
             if (this.uri.includes("Distribution"))
               for (let i = 0; i < this.triples.length; i++) {
                 //console.log(this.triples[i]);
@@ -173,8 +281,8 @@
           }).then((res) => {
             if (res.data.result === "ok")
               alert("Metadata added");
-              this.metaInputs = [];
-              this.loadTriples();
+            this.metaInputs = [];
+            this.loadTriples();
 
           })
           .catch((error) => {
@@ -272,8 +380,81 @@
 
       },
 
+      initiateMap() {
+
+
+        var format = new WKT();
+
+        let iconStyle = new Style({
+          image: new Icon({
+            anchor: [0.5, 46],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+          }),
+        });
+
+        var feature = format.readFeature(this.dataset.geom, {
+          dataProjection: 'EPSG:4326',
+          featureProjection: 'EPSG:3857',
+        });
+
+        feature.setStyle(iconStyle);
+
+
+        var vector = new VectorLayer({
+          source: new VectorSource({
+            features: [feature],
+          }),
+        });
+
+
+
+
+        // create title layer
+        var raster = new TileLayer({
+          source: new OSM(),
+        });
+        // create map with 2 layer
+        // eslint-disable-next-line no-unused-vars
+        var view = new View({
+          center: [2952104.0199, -3277504.823],
+          zoom: 15,
+        });
+        this.map = new Map({
+          view: view,
+          target: "map",
+          layers: [raster, vector],
+
+        });
+
+        view.fit(feature.getGeometry(), {
+          padding: [170, 50, 30, 150],
+          minResolution: 2000
+        });
+        //var size = map.getSize();
+        // view.centerOn(feature.getGeometry().getCoordinates(), size, [1200, 300]);
+
+
+
+      }
+
 
     }
 
   }
 </script>
+
+<style>
+  .mapds {
+    width: 1200px !important;
+    height: 300px !important;
+    margin-left: 130px;
+  }
+
+
+  .center {
+    margin: auto;
+
+  }
+</style>

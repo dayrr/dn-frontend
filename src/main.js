@@ -50,13 +50,17 @@ Vue.component('Publicationo', Publicationo);
 Vue.component('UploadFiles', UploadFiles);
 Vue.component('MetaInput', MetaInput);
 
-//Vue.prototype.host = 'http://melodi.irit.fr/';
-//Vue.prototype.graphdb = 'http://melodi.irit.fr/graphdb/';
-//Vue.prototype.dataverse = 'http://melodi.irit.fr:8080/';
+//Vue.prototype.host = '#HOST#';
+//Vue.prototype.graphdb = '#GRAPHDB#';
+//Vue.prototype.dataverse = '#DATAVERSE#';
 
-Vue.prototype.host = 'http://localhost:8000/';
-Vue.prototype.graphdb = 'http://localhost:7200/';
-Vue.prototype.dataverse = 'http://localhost:8085/';
+Vue.prototype.host = 'http://melodi.irit.fr/';
+Vue.prototype.graphdb = 'http://melodi.irit.fr/graphdb/';
+Vue.prototype.dataverse = 'http://melodi.irit.fr:8080/';
+
+//Vue.prototype.host = 'http://localhost:8000/';
+//Vue.prototype.graphdb = 'http://localhost:7200/';
+//Vue.prototype.dataverse = 'http://localhost:8085/';
 Vue.prototype.calisto = '';
 
 Vue.component('Dropdown', Dropdown);
