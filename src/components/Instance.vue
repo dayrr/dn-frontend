@@ -7,38 +7,66 @@
         <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="showTriples" variant="primary">
           Triples mode</b-button>
       </h3>
+    </b-row>
+    <b-row v-if="!view" v-show="!view">
 
       <b-list-group>
-        <b-list-group-item>Description: {{dataset.description}}</b-list-group-item>
+        <b-list-group-item v-show="(dataset.description!='') && dataset.description!=null">Description:
+          {{dataset.description}}</b-list-group-item>
+        <b-list-group-item>Identifier: {{dataset.identifier}}</b-list-group-item>
+        <b-list-group-item target="_blank" v-bind:href="dataset.page">Landing page: {{dataset.page}}</b-list-group-item>
         <b-list-group-item>Subject: {{dataset.subject}}</b-list-group-item>
         <b-list-group-item>Publication Date: {{dataset.issued}}</b-list-group-item>
-        <b-list-group-item>Authors: <div v-for="(author, index) in dataset.creators" :key="index"> <a
-              v-bind:href="author.uri"> {{author.name}} </a></div>
-        </b-list-group-item>
-        <b-list-group-item>Depositors: <div v-for="(depositor, index) in dataset.depositors" :key="index"> <a
-              v-bind:href="depositor.uri"> {{depositor.name}} </a></div>
+
+        <b-list-group-item v-show="(dataset.creators!== undefined) && (dataset.creators.length!=0)">Authors:
+          <b-list-group v-for="(author, index) in dataset.creators" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="author.uri">{{author.name}}</b-list-group-item>
+          </b-list-group>
         </b-list-group-item>
 
-        <b-list-group-item>Publisers: <div v-for="(publisher, index) in dataset.publishers" :key="index"> <a
-              v-bind:href="publisher.uri"> {{publisher.name}} </a></div>
+        <b-list-group-item v-show="(dataset.depositors!== undefined) && (dataset.depositors.length!=0)">Depositors:
+          <b-list-group v-for="(depositor, index) in dataset.depositors" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="depositor.uri">{{depositor.name}}</b-list-group-item>
+          </b-list-group>
+        </b-list-group-item>
+
+        <b-list-group-item v-show="(dataset.publishers!== undefined) && (dataset.publishers.length!=0)">Publisers:
+          <b-list-group v-for="(publisher, index) in dataset.publishers" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="publisher.uri">{{publisher.name}}</b-list-group-item>
+          </b-list-group>
         </b-list-group-item>
 
 
-        <b-list-group-item>Keywords: <div v-for="(key, index) in dataset.keywords" :key="index"> <a
-              v-bind:href="key.keyword"> {{key.keyword}} </a></div>
+        <b-list-group-item v-show="(dataset.keywords!== undefined) && (dataset.keywords.length!=0)">Keywords:
+          <b-list-group v-for="(key, index) in dataset.keywords" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="'#/datasets?search=keyword&searchValue='+key.keyword">{{key.keyword}}</b-list-group-item>
+          </b-list-group>
         </b-list-group-item>
 
-        <b-list-group-item>Keywords: <div v-for="(key, index) in dataset.keywords" :key="index"> <a
-              v-bind:href="key.keyword"> {{key.keyword}} </a></div>
+        <b-list-group-item v-show="(dataset.note!='') && dataset.note!=null">Note: {{dataset.note}}</b-list-group-item>
+        <b-list-group-item v-show="(dataset.publication!== undefined) && (dataset.publication.length!=0)">Related
+          publications:
+
+          <b-list-group v-for="(pub, index) in dataset.publication" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="pub.uri">{{pub.DOI}} - {{pub.title}}. {{pub.issued}}
+            </b-list-group-item>
+          </b-list-group>
+
         </b-list-group-item>
 
-        <b-list-group-item>Note: {{dataset.note}}</b-list-group-item>
-        <b-list-group-item>Related publications: <div v-for="(pub, index) in dataset.publication" :key="index"> <a
-              v-bind:href="pub.uri"> {{pub.title}}. {{pub.issued}}. {{pub.DOI}} </a></div>
-        </b-list-group-item>
-        <b-list-group-item>
+        <b-list-group-item v-show="(dataset.geom!='') && dataset.geom!=null">
           Localisation <div id="map" class="mapds"></div>
         </b-list-group-item>
+
+        <b-list-group-item v-show="(dataset.dists!== undefined) && (dataset.dists.length!=0)">Distributions:
+
+          <b-list-group v-for="(dist, index) in dataset.dists" :key="index">
+            <b-list-group-item target="_blank" v-bind:href="dist.downloadURL"> Distribution {{index+1}}. (format: {{dist.format}} size: {{dist.size}}
+              bytes, media type:
+              {{dist.mediaType}})</b-list-group-item>
+          </b-list-group>
+        </b-list-group-item>
+
 
 
 
@@ -62,7 +90,7 @@
           </div>
           <div v-show="uri.includes('Dataset')">
             <b-button class="text-center mt-4 mb-4" type="button" size="sm" v-on:click="showTriples" variant="primary">
-              Resume mode</b-button>
+              Normal mode</b-button>
           </div>
         </h4>
         <div class="accordion" role="tablist">
@@ -209,20 +237,34 @@
     },
 
     methods: {
+      search: function (keyword) {
+        alert(keyword);
+        let routeData = this.$router.resolve({
+          name: 'datasets',
+          params: {
+            search: 'keyword',
+            searchValue: keyword
+          }
+        });
+        window.open(routeData.href, '_blank');
+
+      },
+
       showTriples: function () {
         this.view = !this.view;
-        if (this.view)
-          this.map.setTarget(null);
+        if ((this.dataset.geom != '') && this.dataset.geom != null)
+          if (this.view)
+            this.map.setTarget(null);
 
-        else {
-          this.map.setTarget("map");
+          else {
+            this.map.setTarget("map");
 
-          let that= this;
-          setTimeout(function () {
-            that.initiateMap();
-          }, 1000);
+            let that = this;
+            setTimeout(function () {
+              that.initiateMap();
+            }, 1000);
 
-        }
+          }
       },
 
       loadTriples: function () {
@@ -239,7 +281,14 @@
                 url: this.host + 'api/show-dataset?uri=' + this.uri,
               }).then((res) => {
                 this.dataset = res.data.rs;
-                this.initiateMap();
+
+                if ((this.dataset.geom != '') && this.dataset.geom != null) {
+                  let that = this;
+                  setTimeout(function () {
+                    that.initiateMap();
+                  }, 1000);
+
+                }
               });
             }
 
