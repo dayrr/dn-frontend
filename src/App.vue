@@ -70,7 +70,7 @@
               Ontologies
             </b-dropdown-item>
             <b-dropdown-item :to="{name: 'harvest-sites'}">
-              Harvesting Sites
+              Harvest Sites
             </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>

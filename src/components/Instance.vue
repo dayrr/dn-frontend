@@ -39,7 +39,8 @@
 
         <b-list-group-item v-show="(dataset.keywords!== undefined) && (dataset.keywords.length!=0)">Keywords:
           <b-list-group v-for="(key, index) in dataset.keywords" :key="index">
-            <b-list-group-item target="_blank" v-bind:href="'#/datasets?search=keyword&searchValue='+key.keyword">{{key.keyword}}</b-list-group-item>
+            <b-list-group-item target="_blank" v-bind:href="'#/datasets?search=keyword&searchValue='+key.keyword">
+              {{key.keyword}}</b-list-group-item>
           </b-list-group>
         </b-list-group-item>
 
@@ -61,11 +62,28 @@
         <b-list-group-item v-show="(dataset.dists!== undefined) && (dataset.dists.length!=0)">Distributions:
 
           <b-list-group v-for="(dist, index) in dataset.dists" :key="index">
-            <b-list-group-item target="_blank" v-bind:href="dist.downloadURL"> Distribution {{index+1}}. (format: {{dist.format}} size: {{dist.size}}
+            <b-list-group-item target="_blank" v-bind:href="dist.downloadURL"> Distribution {{index+1}}. (format:
+              {{dist.format}} size: {{dist.size}}
               bytes, media type:
               {{dist.mediaType}})</b-list-group-item>
           </b-list-group>
         </b-list-group-item>
+
+
+        <b-list-group-item v-show="(dataset.provo!== undefined) && (Object.keys(dataset.provo).length!=0)">Provenance:
+          <b-list-group>
+            <b-list-group-item target="_blank" v-bind:href="dataset.provo.source"> Generated from source: {{dataset.provo.source}}
+            </b-list-group-item>
+            <b-list-group-item target="_blank" v-bind:href="'http://'+dataset.provo.site"> Harvest site:
+              {{dataset.provo.site}} </b-list-group-item>
+            <b-list-group-item target="_blank" v-bind:href="dataset.provo.agent"> Harvested by: {{dataset.provo.agentName}}
+            </b-list-group-item>
+              <b-list-group-item> At time: {{dataset.provo.atTime}}
+            </b-list-group-item>
+          </b-list-group>
+
+        </b-list-group-item>
+
 
 
 
