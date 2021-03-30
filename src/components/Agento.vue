@@ -17,6 +17,7 @@
 </template>
 
 <script>
+ // define a component that can be included by other ones.
   //import Autocomplete from '@trevoreyre/autocomplete-vue'
   export default {
     name: 'Agento',
@@ -56,6 +57,7 @@
         return result.name
       },
 
+      // if OK emit updated event to parent
       handleSubmit(result) {
         if (result !== undefined) {         
           

@@ -21,6 +21,7 @@ export default {
 
   created() {
     let url = this.host + 'api/sites';
+    //get the sites from django and show them
     axios({
             method: 'get',
             url: url,            

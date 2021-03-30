@@ -51,6 +51,7 @@
       }
     },
 
+    //get all formats for auto complete
     mounted: function () {
       this.doi = this.$route.params.doi;
       this.uri = this.$route.params.uri;
@@ -71,7 +72,7 @@
           //Perform action in always
         });
 
-
+      //custom CSS
       document.getElementsByName("dropdown")[0].className = "form-control";
       document.getElementsByName("dropdown")[0].autocomplete = "off";
 
@@ -85,7 +86,7 @@
 
       },
 
-
+      // prepare form data and send to django
       submitFile() {
         const formData = new FormData();
         //for (let file of this.files) {

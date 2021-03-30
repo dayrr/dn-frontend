@@ -84,6 +84,7 @@
     },
 
     methods: {
+      // prepare data form and send it to djando 
       create() {
         let url = this.host + "api/new-pub"
         axios({
@@ -113,6 +114,7 @@
           });
       },
 
+      //search for existing publication 
       search(e) {
 
         if (this.identifier.length < 4) {
@@ -151,7 +153,7 @@
         });
         this.count++;
       },
-
+      // handle child event
       updateAuthor: function (uri, name, email, author) {
         author.uri = uri;
         author.name = name;
@@ -175,6 +177,7 @@
         this.$emit('updated', this.uri, this.title, this.issuedDate, this.identifier, this.authors, this.pub)
 
       }, 
+
        show(record, index) {
         console.log(index);
         let routeData = this.$router.resolve({

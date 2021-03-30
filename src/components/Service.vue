@@ -92,6 +92,7 @@
         outputFormat: {},
         identifier: "",
         subject: "",
+        //to do: Must be sync with django, defines them in a json instead
         options: [{
             value: '1',
             text: 'Arts and Humanities'
@@ -187,7 +188,7 @@
           //Perform action in always
         });
 
-
+      //custom CSS
       document.getElementsByName("dropdown")[0].className = "form-control";
       document.getElementsByName("dropdown")[1].className = "form-control";
       document.getElementsByName("dropdown")[2].className = "form-control";
@@ -214,6 +215,7 @@
 
       },
 
+      //prepare form data and send them to django
       submitService: function () {
 
         const formData = new FormData();

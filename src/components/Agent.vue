@@ -72,6 +72,7 @@
     },
 
     methods: {
+      // send data to django 
       create() {
      
         axios({
@@ -113,7 +114,7 @@
 
 
 
-
+      // check existing agents
       search(e) {
         if (this.name.length < 4)
         {

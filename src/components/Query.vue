@@ -38,7 +38,7 @@
 
 
     created: function () {
-
+      // fill the textarea with a query example 
       this.sparql = `PREFIX dn: <http://melodi.irit.fr/ontologies/dn/>
 
 SELECT ?uri ?name ?desc ?input ?output ?operation 
@@ -57,6 +57,7 @@ WHERE
 },
 
     methods: {
+      //send the query to django and display the result in a table
       query() {
         let url = this.host + 'api/query?query=' + encodeURIComponent(this.sparql);
        axios({
@@ -75,7 +76,7 @@ WHERE
           });
       },
 
-
+      // if the cell content is a link (begins http), open a new page when clicked
       show(record, index) {
         console.log(index);
         //console.log(record.value);

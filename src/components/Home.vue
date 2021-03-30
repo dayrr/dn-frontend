@@ -95,8 +95,10 @@
 
       }
     },
+
     async mounted() {
         document.title = "DataNoos";
+        //initiate the map at the bottom right
         await this.initiateMap();
         let url = this.host + 'api/stat-subj';
         axios({
@@ -122,6 +124,7 @@
             //Perform action in always
           });
 
+        // initiate the most recent deposits
         url = this.host + 'api/list-recents';
         axios({
             method: 'get',
@@ -157,6 +160,7 @@
 
       ,
     methods: {
+      // search datasets by title (through the textbox at the center)
       searchTitle() {
         this.$router.push({
           name: 'datasets',
@@ -167,6 +171,7 @@
         });
       },
 
+      // search datasets by clicking on the words cloud
       search(event) {
 
         if (event.target.outerText.length>20)

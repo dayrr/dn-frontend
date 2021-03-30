@@ -11,6 +11,7 @@
 
 
 <script>
+ // define a component that can be included by other ones.
   //import Autocomplete from '@trevoreyre/autocomplete-vue'
   export default {
     name: 'MetaInput',
@@ -28,6 +29,7 @@
 
     },
     methods: {
+      //check if the range of the predicate is a literal or a not
       updateProp() {
         if (!this.metaInput.range.toLowerCase().includes("literal"))
           if (!this.inputValue.includes("http"))

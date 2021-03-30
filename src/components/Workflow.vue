@@ -172,7 +172,7 @@
 
 
     mounted: function () {
-
+      //check parameters if exist
       if (this.$route.params.uri !== undefined)
         this.uri = this.$route.params.uri;
       else {
@@ -187,7 +187,9 @@
     methods: {
 
       loadServices() {
+
         axios({
+            // get information of the distribution
             method: 'get',
             url: this.host + 'api/distribution?uri=' + this.uri
           }).then((res) => {
@@ -195,13 +197,13 @@
             this.dist_url = res.data.rs[0].download;
             this.title = res.data.rs[0].title;
             this.dist_size = res.data.rs[0].size;
-
+            //add the first service, which is mandatory
             this.nodes = [{
               id: this.nodes.length,
               label: 'Retrieve data' + "\n",
               title: 'Retrieve data' + "\n",
               shape: 'box',
-
+              // URI of the service declared in the triplestore.
               uri: 'http://melodi.irit.fr/resource/Service/dn_1',
               color: {
                 background: "#007bff"
@@ -218,10 +220,11 @@
               nodes: this.nodes,
               edges: this.edges,
             };
+            // refresh and redraw the network
             this.container = this.$refs.network;
             this.updateGraph();
 
-
+            // get and filter the services that can apply on the current data
             axios({
                 method: 'get',
                 url: this.host + 'api/service'
@@ -252,6 +255,7 @@
 
       },
 
+      // when  a distribution is chosen
       selectDis: function () {
         let dis = this.distributions.filter(cls => cls.uri === this.distribution)[0];
         this.dist_format = dis.format;
@@ -266,7 +270,7 @@
 
 
 
-
+      // search for datasets by their title
       search(input) {
         //this.host + 'api/datasets?value=' + this.searchValue + "&search=" + this.search,
         let url = this.host + 'api/dataset?search=title&value=' + encodeURI(input)
@@ -285,15 +289,18 @@
         })
       },
 
+      // show the results of the search for autocomplete
       getResultValue(result) {
 
         return result.title;
       },
 
+      // if the user choose a dataset
       handleSubmit(result) {
         if (result !== undefined) {
           this.title = result.title;
           this.uri = result.uri;
+          //get all its distributions
           axios({
               method: 'get',
               url: this.host + 'api/distributions?uri=' + this.uri,
@@ -315,6 +322,7 @@
 
       },
 
+      // create a HTML table for overviewing the data
       createTable(tableData) {
         let table = document.createElement('table');
         let tableBody = document.createElement('tbody');
@@ -335,6 +343,7 @@
         return table.outerHTML;
       },
 
+      //show or hide the description of the chosen service
       setDesc: function () {
         // this.desc = this.selectedOp.desc;
         this.desc = true;
@@ -346,7 +355,7 @@
           this.hasParameters = false;
       },
 
-
+      // add a node (service) to the workflow
       addNode: function () {
         //let sh = this.Operations.find(op => op.uri === this.selectedOp);
         this.desc = false;
@@ -384,6 +393,7 @@
         });
       },
 
+      // when the workflow changes, update and redraw the network for visualization
       updateGraph() {
         this.network = new Network(this.$refs.network, this.data, this.options);
         let that = this;
@@ -415,6 +425,7 @@
 
 
       },
+      // execute the workflow
       async run() {
         this.desc = false;
         //http://localhost:8000/this.host + 'api/work?uri=http://melodi.irit.fr/resource/Service/0&in=

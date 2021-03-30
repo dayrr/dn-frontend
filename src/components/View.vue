@@ -21,6 +21,7 @@
 
 
     methods: {
+      // if a row is clicked, open new page, show information of this instance
       show(record, index) {
         console.log(index);
         let routeData = this.$router.resolve({
@@ -36,6 +37,7 @@
       }
     },
 
+    //watch if parameter (class) change, retrieve and display new content
     watch: {
       $route(to, from) {
 

@@ -100,7 +100,7 @@
 
     },
     methods: {
-
+      // check exist claims
       search(input) {
         const url = this.host + 'api/pub-title?title=' + encodeURI(input)
 
@@ -139,6 +139,7 @@
         return result.title
       },
 
+
       handleSubmit(result) {
         if (result === undefined) {
           console.log(1);
@@ -169,7 +170,7 @@
 
       },
 
-
+      // send data to django
       create: function () {
         let url = this.host + 'api/new-claim';
         axios({

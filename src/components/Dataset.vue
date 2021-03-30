@@ -141,6 +141,7 @@
         countpb: 0,
         show: true,
         subject: '5',
+        //to do: must be sync with django, make a json instead
         options: [{
             value: '1',
             text: 'Arts and Humanities'
@@ -196,7 +197,9 @@
         ]
       }
     },
+
     async mounted() {
+      // show the map, must by sync, if not, the map doesn't show
       await this.initiateMap();
     },
 
@@ -216,6 +219,7 @@
     },
     methods: {
 
+      
       initiateMap() {
 
         var source = new VectorSource({
@@ -246,7 +250,7 @@
 
         var draw; // global so we can remove it later
         let that = this;
-
+        // add interaction show that the user can click on the map to input coordonates
         function addInteraction() {
 
           draw = new Draw({
@@ -259,6 +263,7 @@
 
         addInteraction();
 
+        // if draw end, capture the user input
         draw.on('drawend', function (e) {
           that.loc = e.feature.getGeometry().getCoordinates();
           let format = new WKT();
@@ -304,6 +309,7 @@
           });
         this.count++;
       },
+      // send data to django
       submitForm() {
         //evt.preventDefault();
         let url = this.host + 'api/new-dataset';

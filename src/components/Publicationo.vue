@@ -16,6 +16,7 @@
 </template>
 
 <script>
+  // define a component that can be included by other ones.
   const axios = require('axios');
   export default {
     name: 'Publication',
@@ -31,7 +32,7 @@
    
     },
     methods: {
-
+      //send a request to django  to check exist publication to avoid duplication
       search(input) {
 
         let url = this.host + 'api/pub-title?title=' + encodeURI(input);
@@ -54,6 +55,7 @@
         return result.title
       },
 
+      // when data is filled, emit updated event to parent
       handleSubmit(result) {
         if (result !== undefined) {
 

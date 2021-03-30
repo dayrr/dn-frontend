@@ -32,7 +32,7 @@ import 'codemirror/mode/turtle/turtle.js'
       }
     },
 
-
+    // to do; send triples to djando for insertion
     created: function () {
       
     },

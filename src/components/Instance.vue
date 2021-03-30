@@ -270,6 +270,7 @@
 
       showTriples: function () {
         this.view = !this.view;
+        //if the dataset has spatial information, show it on a map.
         if ((this.dataset.geom != '') && this.dataset.geom != null)
           if (this.view)
             this.map.setTarget(null);
@@ -285,6 +286,7 @@
           }
       },
 
+      // get all triples whose subject is the given instance
       loadTriples: function () {
         let url = this.host + 'api/instance?uri=' + this.uri;
         axios({
@@ -292,6 +294,7 @@
             url: url,
           }).then((res) => {
             this.triples = res.data.rs;
+            // if the instance is a dataset, display the page in a different manner
             if (this.uri.includes("Dataset")) {
               this.view = false;
               axios({
@@ -309,7 +312,7 @@
                 }
               });
             }
-
+            // if the instance is a distriution, add Workflow and download button 
             if (this.uri.includes("Distribution"))
               for (let i = 0; i < this.triples.length; i++) {
                 //console.log(this.triples[i]);
@@ -336,6 +339,7 @@
 
       },
 
+      // send the triple to django for insertion
       submit: function () {
 
         axios({
@@ -364,6 +368,8 @@
         metaInput.value = value;
       },
 
+
+      // redirect to the workflow page
       addWorkflow: function () {
         this.$router.push({
           name: 'work',

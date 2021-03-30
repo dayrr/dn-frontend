@@ -59,6 +59,7 @@
 
 
     methods: {
+      // search datasets (from harvest site) by their title
       searchTitle() {
         let site = this.sites.find(record => record.name === this.site);
         console.log(site);
@@ -77,6 +78,7 @@
               }];
               return;
             }
+            // check if the harvest site is a Dataverse or not
             if (site.type!="dataverse")
               res.data.data.forEach(function (ds) {
                 let d = {};
@@ -110,7 +112,7 @@
           });
 
 
-
+        //also check exist datasets having the same title
         axios({
             method: 'get',
             url: url
@@ -138,6 +140,7 @@
           });
       },
 
+      // show a confirm message and send the ID of the dataset to django for importing
       importMeta(record, index) {
         this.$confirm({
           message: 'Would you like to import metadata for the dataset: \n' + record.title + '\n from ' + this.site +
@@ -161,6 +164,7 @@
                     alert("Metadata imported!");
                     let url = this.host + 'api/dataset?value=' + this.searchText + "&search=title";
                     this.tbl = [];
+                    //refresh exist datasets (the imported dataset must be showed)
                     axios({
                         method: 'get',
                         url: url
